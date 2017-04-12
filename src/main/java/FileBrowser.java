@@ -26,273 +26,288 @@ import javafx.stage.Stage;
 
 public class FileBrowser extends HBox{
 
-    File root;
-    static ArrayList<File> fileList;
-    static VBox selected;
-   public FileBrowser(AITAGUI ag){
-        root = new File("C:/");
-        fileList = new ArrayList<File>();
+	File root;
+	static ArrayList<File> fileList;
+	static VBox selected;
+	public FileBrowser(AITAGUI ag){
+		if (System.getProperty("os.name").contains("Windows"))
+		{
+			root = new File("C:/");
+		}
+		else
+		{
+			root = new File("/");
+		}
+		fileList = new ArrayList<File>();
 
-        VBox vbRoot = new VBox();
-        vbRoot.setMinWidth(150);
-        vbRoot.setMaxWidth(150);
+		VBox vbRoot = new VBox();
+		vbRoot.setMinWidth(150);
+		vbRoot.setMaxWidth(150);
 
-        VBox vb1 = new VBox();
-        ScrollPane sp = new ScrollPane();
-        sp.setMinWidth(200);
-        sp.setMaxWidth(200);
-        sp.setContent(vb1);
-        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        sp.setBackground(Background.EMPTY);
+		VBox vb1 = new VBox();
+		ScrollPane sp = new ScrollPane();
+		sp.setMinWidth(200);
+		sp.setMaxWidth(200);
+		sp.setContent(vb1);
+		sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		sp.setBackground(Background.EMPTY);
 
-        MyFile fol1 = root.isDirectory()?new Folder(root):new AFile(root);
-        fol1.name = "C:\\";
-        fol1.text.setText("C:\\");
-        fol1.realbtn.setMinWidth(fol1.text.getLayoutBounds().getWidth()+64+10);
-        fol1.realbtn.setMaxWidth(fol1.text.getLayoutBounds().getWidth()+64+10);
-        vb1.getChildren().add(fol1);
+		MyFile fol1 = root.isDirectory()?new Folder(root):new AFile(root);
+		if (System.getProperty("os.name").contains("Windows"))
+		{
+			fol1.name = "C:\\";
+			fol1.text.setText("C:\\");
+		}
+		else
+		{
+			fol1.name = "/";
+			fol1.text.setText("/");
+		}
+		fol1.realbtn.setMinWidth(fol1.text.getLayoutBounds().getWidth()+64+10);
+		fol1.realbtn.setMaxWidth(fol1.text.getLayoutBounds().getWidth()+64+10);
+		vb1.getChildren().add(fol1);
 
-        Button btn = new Button("Submit");
-        btn.setDefaultButton(true);
-        btn.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event) {
-               ag.submit(fileList);
-            }
-        });
-        selected = new VBox();
-        this.getChildren().addAll(vbRoot,sp);
-        vbRoot.getChildren().addAll(btn,selected);
+		Button btn = new Button("Submit");
+		btn.setDefaultButton(true);
+		btn.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				ag.submit(fileList);
+			}
+		});
+		selected = new VBox();
+		this.getChildren().addAll(vbRoot,sp);
+		vbRoot.getChildren().addAll(btn,selected);
 
-    }
+	}
 
 }
 
 class MyFile extends VBox{
-    HBox stuff;
-    File file;
-    String name;
-    Button btn;
-    Text text;
-    boolean bool;
-    ImageView pic;
-    Button realbtn;
-    StackPane secret;
-    HBox secret2;
+	HBox stuff;
+	File file;
+	String name;
+	Button btn;
+	Text text;
+	boolean bool;
+	ImageView pic;
+	Button realbtn;
+	StackPane secret;
+	HBox secret2;
 
-    public MyFile(){
+	public MyFile(){
 
-    }
+	}
 
-    public MyFile(File f){
-        stuff = new HBox();
-        stuff.setSpacing(5);
-        file = f;
-        name = f.getName();
-        bool = false;
+	public MyFile(File f){
+		stuff = new HBox();
+		stuff.setSpacing(5);
+		file = f;
+		name = f.getName();
+		bool = false;
 
-        text = new Text(name);
-        text.setFont(new Font("monospace", 10));
-        btn = new Button();
-        btn.setBackground(Background.EMPTY);
-        btn.setMaxSize(16, 16);
-        btn.setMinSize(16, 16);
-        pic = new ImageView();
+		text = new Text(name);
+		text.setFont(new Font("monospace", 10));
+		btn = new Button();
+		btn.setBackground(Background.EMPTY);
+		btn.setMaxSize(16, 16);
+		btn.setMinSize(16, 16);
+		pic = new ImageView();
 
-        secret = new StackPane();
-        secret.getChildren().add(stuff);
-        secret2 = new HBox();
-        realbtn = new Button();
-        realbtn.setMinHeight(16);
-        realbtn.setMaxHeight(16);
+		secret = new StackPane();
+		secret.getChildren().add(stuff);
+		secret2 = new HBox();
+		realbtn = new Button();
+		realbtn.setMinHeight(16);
+		realbtn.setMaxHeight(16);
 
-        realbtn.setMinWidth(text.getLayoutBounds().getWidth()+64+10);
-        realbtn.setMaxWidth(text.getLayoutBounds().getWidth()+64+10);
-        realbtn.setBackground(Background.EMPTY);
+		realbtn.setMinWidth(text.getLayoutBounds().getWidth()+64+10);
+		realbtn.setMaxWidth(text.getLayoutBounds().getWidth()+64+10);
+		realbtn.setBackground(Background.EMPTY);
 
-        secret2.getChildren().add(realbtn);
-        secret.getChildren().add(secret2);
-        stuff.getChildren().addAll(btn,pic,text);
+		secret2.getChildren().add(realbtn);
+		secret.getChildren().add(secret2);
+		stuff.getChildren().addAll(btn,pic,text);
 
 
-        getChildren().add(secret);
-    }
+		getChildren().add(secret);
+	}
 }
 
 class Folder extends MyFile{
-    InFolder in;
-    Image closed;
-    Image open;
-    ImageView arrowOpen;
-    ImageView arrowClosed;
-    boolean empty;
+	InFolder in;
+	Image closed;
+	Image open;
+	ImageView arrowOpen;
+	ImageView arrowClosed;
+	boolean empty;
 
-    public Folder(File f){
-        super(f);
+	public Folder(File f){
+		super(f);
 
-        in = new InFolder(f);
-        in.parent = this;
-        getChildren().add(in);
+		in = new InFolder(f);
+		in.parent = this;
+		getChildren().add(in);
 
-        arrowOpen = new ImageView(new Image(this.getClass().getResource("arrow2.png").toString(), 16, 16, true, false));
-        arrowClosed = new ImageView(new Image(this.getClass().getResource("arrow1.png").toString(), 16, 16, true, false));
+		arrowOpen = new ImageView(new Image(this.getClass().getResource("arrow2.png").toString(), 16, 16, true, false));
+		arrowClosed = new ImageView(new Image(this.getClass().getResource("arrow1.png").toString(), 16, 16, true, false));
 
-        empty = !(f.listFiles(new emptyCheck()) != null && f.listFiles(new emptyCheck()).length>0);
-        if(!empty){
-            closed = new Image(this.getClass().getResource("folderClosed2.png").toString(), 16, 16, true, false);
-            open = new Image(this.getClass().getResource("folderOpen2.png").toString(), 16, 16, true, false);
-        }
-        else{
-            closed = new Image(this.getClass().getResource("folderClosed.png").toString(), 16, 16, true, false);
-            open = new Image(this.getClass().getResource("folderOpen.png").toString(), 16, 16, true, false);
-        }
+		empty = !(f.listFiles(new emptyCheck()) != null && f.listFiles(new emptyCheck()).length>0);
+		if(!empty){
+			closed = new Image(this.getClass().getResource("folderClosed2.png").toString(), 16, 16, true, false);
+			open = new Image(this.getClass().getResource("folderOpen2.png").toString(), 16, 16, true, false);
+		}
+		else{
+			closed = new Image(this.getClass().getResource("folderClosed.png").toString(), 16, 16, true, false);
+			open = new Image(this.getClass().getResource("folderOpen.png").toString(), 16, 16, true, false);
+		}
 
-        //btn.setText(">");
-        btn.setGraphic(arrowClosed);
-        //if(!empty)
-        realbtn.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event) {
-                in.action();
-            }
-        });
-        pic.setImage(closed);
-        //stuff.getChildren().addAll(btn,pic,text);
+		//btn.setText(">");
+		btn.setGraphic(arrowClosed);
+		//if(!empty)
+		realbtn.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				in.action();
+			}
+		});
+		pic.setImage(closed);
+		//stuff.getChildren().addAll(btn,pic,text);
 
-    }
+	}
 
 }
 
 class InFolder extends VBox{
-    MyFile[] files;
-    File file;
-    boolean filled;
-    boolean visible;
-    Folder parent;
+	MyFile[] files;
+	File file;
+	boolean filled;
+	boolean visible;
+	Folder parent;
 
-    public InFolder(File f){
-        filled = false;
-        visible = false;
-        setPadding(new Insets(0,0,0,11));
-        file = f;
+	public InFolder(File f){
+		filled = false;
+		visible = false;
+		setPadding(new Insets(0,0,0,11));
+		file = f;
 
-    }
-    public void fill(){
-        filled = true;
-        for(File t:file.listFiles()){
-            if(t.isDirectory() && !t.isHidden())
-                getChildren().add(new Folder(t));
-        }
-        for(File t:file.listFiles()){
-            if(!t.isDirectory() && !t.isHidden())
-                getChildren().add(new AFile(t));
-        }
-    }
+	}
+	public void fill(){
+		filled = true;
+		for(File t:file.listFiles()){
+			if(t.isDirectory() && !t.isHidden())
+				getChildren().add(new Folder(t));
+		}
+		for(File t:file.listFiles()){
+			if(!t.isDirectory() && !t.isHidden())
+				getChildren().add(new AFile(t));
+		}
+	}
 
-    public void action(){
-        if(!filled && !parent.empty) fill();
-        visible = !visible;
-        setVisible(visible);
-        setManaged(visible);
-        parent.btn.setGraphic(visible?parent.arrowOpen:parent.arrowClosed);
-        parent.pic.setImage(visible?parent.open:parent.closed);
-    }
+	public void action(){
+		if(!filled && !parent.empty) fill();
+		visible = !visible;
+		setVisible(visible);
+		setManaged(visible);
+		parent.btn.setGraphic(visible?parent.arrowOpen:parent.arrowClosed);
+		parent.pic.setImage(visible?parent.open:parent.closed);
+	}
 }
 
 class AFile extends MyFile{
-    Image imgFile;
-    Image imgJava;
-    ImageView uncheck;
-    ImageView check;
-    AFileClone clone;
+	Image imgFile;
+	Image imgJava;
+	ImageView uncheck;
+	ImageView check;
+	AFileClone clone;
 
-    public AFile(File f){
-        super(f);
+	public AFile(File f){
+		super(f);
 
-        imgFile = new Image(this.getClass().getResource("file.png").toString(), 16, 16, true, false);
-        imgJava = new Image(this.getClass().getResource("java.png").toString(), 16, 16, true, false);
-        check = new ImageView(new Image(this.getClass().getResource("check.png").toString(), 16, 16, true, false));
-        uncheck = new ImageView(new Image(this.getClass().getResource("uncheck.png").toString(), 16, 16, true, false));
+		imgFile = new Image(this.getClass().getResource("file.png").toString(), 16, 16, true, false);
+		imgJava = new Image(this.getClass().getResource("java.png").toString(), 16, 16, true, false);
+		check = new ImageView(new Image(this.getClass().getResource("check.png").toString(), 16, 16, true, false));
+		uncheck = new ImageView(new Image(this.getClass().getResource("uncheck.png").toString(), 16, 16, true, false));
 
-        //btn.setText("_");
-        btn.setGraphic(uncheck);
-        realbtn.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event) {
-                action();
-            }
-        });
-        pic.setImage((name.length()>=4 && name.substring(name.length()-4).equalsIgnoreCase("java"))?imgJava:imgFile);
-        //stuff.getChildren().addAll(btn,pic,text);
-    }
-    public void action(){
-        bool = !bool;
-        if(bool){
-            btn.setGraphic(check);
-            FileBrowser.fileList.add(file);
-            clone = new AFileClone(this);
-            FileBrowser.selected.getChildren().add(clone);
-        }
-        else{
-            btn.setGraphic(uncheck);
-            FileBrowser.fileList.remove(file);
-            FileBrowser.selected.getChildren().remove(clone);
-            clone = null;
-        }
+		//btn.setText("_");
+		btn.setGraphic(uncheck);
+		realbtn.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				action();
+			}
+		});
+		pic.setImage((name.length()>=4 && name.substring(name.length()-4).equalsIgnoreCase("java"))?imgJava:imgFile);
+		//stuff.getChildren().addAll(btn,pic,text);
+	}
+	public void action(){
+		bool = !bool;
+		if(bool){
+			btn.setGraphic(check);
+			FileBrowser.fileList.add(file);
+			clone = new AFileClone(this);
+			FileBrowser.selected.getChildren().add(clone);
+		}
+		else{
+			btn.setGraphic(uncheck);
+			FileBrowser.fileList.remove(file);
+			FileBrowser.selected.getChildren().remove(clone);
+			clone = null;
+		}
 
 
-    }
+	}
 }
 
 class AFileClone extends StackPane{
-    ImageView img;
-    Button fakebtn;
-    Text text;
-    Button realbtn;
-    AFile original;
-    HBox hb;
+	ImageView img;
+	Button fakebtn;
+	Text text;
+	Button realbtn;
+	AFile original;
+	HBox hb;
 
-    public AFileClone(AFile o){
-        original = o;
-        hb = new HBox();
-        hb.setSpacing(5);
-        img = new ImageView(o.pic.getImage());
-        fakebtn = new Button();
-        fakebtn.setBackground(Background.EMPTY);
-        fakebtn.setMaxSize(16, 16);
-        fakebtn.setMinSize(16, 16);
-        fakebtn.setGraphic(new ImageView(new Image(this.getClass().getResource("check.png").toString(), 16, 16, true, false)));
-        if(o.name.length() > 20){
-            text = new Text(o.name.substring(0,21)+ "...");
-        }
-        else{
-            text = new Text(o.name);
-        }
-        text.setFont(new Font("monospace", 10));
+	public AFileClone(AFile o){
+		original = o;
+		hb = new HBox();
+		hb.setSpacing(5);
+		img = new ImageView(o.pic.getImage());
+		fakebtn = new Button();
+		fakebtn.setBackground(Background.EMPTY);
+		fakebtn.setMaxSize(16, 16);
+		fakebtn.setMinSize(16, 16);
+		fakebtn.setGraphic(new ImageView(new Image(this.getClass().getResource("check.png").toString(), 16, 16, true, false)));
+		if(o.name.length() > 20){
+			text = new Text(o.name.substring(0,21)+ "...");
+		}
+		else{
+			text = new Text(o.name);
+		}
+		text.setFont(new Font("monospace", 10));
 
-        realbtn = new Button();
-        realbtn.setMinHeight(16);
-        realbtn.setMaxHeight(16);
-        realbtn.setMinWidth(o.text.getLayoutBounds().getWidth()+64+10);
-        realbtn.setMaxWidth(o.text.getLayoutBounds().getWidth()+64+10);
-        realbtn.setBackground(Background.EMPTY);
-        realbtn.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event) {
-                original.action();
-            }
-        });
+		realbtn = new Button();
+		realbtn.setMinHeight(16);
+		realbtn.setMaxHeight(16);
+		realbtn.setMinWidth(o.text.getLayoutBounds().getWidth()+64+10);
+		realbtn.setMaxWidth(o.text.getLayoutBounds().getWidth()+64+10);
+		realbtn.setBackground(Background.EMPTY);
+		realbtn.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				original.action();
+			}
+		});
 
-        hb.getChildren().addAll(img,fakebtn,text);
-        getChildren().addAll(hb,realbtn);
-    }
+		hb.getChildren().addAll(img,fakebtn,text);
+		getChildren().addAll(hb,realbtn);
+	}
 }
 
 class emptyCheck implements FileFilter{
 
-    public boolean accept(File f){
-        return !f.isHidden();
-    }
+	public boolean accept(File f){
+		return !f.isHidden();
+	}
 }
 
