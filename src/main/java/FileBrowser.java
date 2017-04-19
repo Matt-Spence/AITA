@@ -200,13 +200,13 @@ class InFolder extends VBox{
 				getChildren().add(new Folder(t));
 		}
 		for(File t:file.listFiles()){
-			if(!t.isDirectory() && !t.isHidden())
+			if(!t.isDirectory() && !t.isHidden() && t.getName().matches(".+\\.java$"))
 				getChildren().add(new AFile(t));
 		}
 	}
 
 	public void action(){
-		if(!filled && !parent.empty) fill();
+		if(!visible) fill();
 		visible = !visible;
 		setVisible(visible);
 		setManaged(visible);
