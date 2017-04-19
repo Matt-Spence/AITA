@@ -21,15 +21,19 @@
     </build>
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>GradeBot-mvn-repo</id>
+            <url>https://raw.github.com/Dominik-Licari/GradeBot/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>com.github.Dominik-Licari</groupId>
+            <groupId>org.snoflake.GradeBot</groupId>
             <artifactId>GradeBot</artifactId>
-            <version>v.9</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
