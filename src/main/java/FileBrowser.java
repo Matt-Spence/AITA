@@ -194,7 +194,8 @@ class InFolder extends VBox{
 
 	}
 	public void fill(){
-		filled = true;
+		//filled = true;
+		getChildren().clear();
 		for(File t:file.listFiles()){
 			if(t.isDirectory() && !t.isHidden())
 				getChildren().add(new Folder(t));
@@ -206,8 +207,8 @@ class InFolder extends VBox{
 	}
 
 	public void action(){
-		if(!visible) fill();
 		visible = !visible;
+		if(visible) fill();
 		setVisible(visible);
 		setManaged(visible);
 		parent.btn.setGraphic(visible?parent.arrowOpen:parent.arrowClosed);
