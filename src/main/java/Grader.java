@@ -11,7 +11,6 @@ import java.util.*;
 class Grader
 {
 	static Logger log = LoggerFactory.getLogger(Grader.class);
-git
 	static Either<Integer, String> grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
 	{
 		try
