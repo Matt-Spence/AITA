@@ -123,8 +123,7 @@ public class GradeBot
 	 */
 	public HashMap<String, String> grade()
 	{
-		PrintStream err = System.err;
-		System.setErr(logOut);
+
 		HashMap<String, String> grades = new HashMap<>();
 		for (File currentFile : sourceCode)
 		{
@@ -140,7 +139,6 @@ public class GradeBot
 				grades.put(currentFile.getAbsolutePath(), result.getLeft().toString());
 			}
 		}
-		System.setErr(err);
 		return grades;
 	}
 

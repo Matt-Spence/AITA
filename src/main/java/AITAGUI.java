@@ -104,8 +104,9 @@ public class AITAGUI extends Application {
 		inputField.setSpacing(5);
 		outputField.setSpacing(5);
 
-		vb.getChildren().add(outputField);
 		vb.getChildren().add(inputField);
+		vb.getChildren().add(outputField);
+
 
 		BorderPane bp = new BorderPane();
 		bp.setCenter(hb);
@@ -187,7 +188,7 @@ public class AITAGUI extends Application {
 		TableView<result> table = new TableView<result>();
 
 		TableColumn<result, String> result = new TableColumn("Result");
-		result.setMinWidth(150);
+		result.setMinWidth(500);
 		result.setCellValueFactory((p) -> {
 			result x = p.getValue();
 			return new SimpleStringProperty(
@@ -195,7 +196,7 @@ public class AITAGUI extends Application {
 		});
 
 		TableColumn<result, String> path = new TableColumn("Path");
-		path.setMinWidth(100);
+		path.setMinWidth(300);
 		path.setCellValueFactory((p) -> {
 			result x = p.getValue();
 			return new SimpleStringProperty(

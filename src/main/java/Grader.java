@@ -47,15 +47,16 @@ class Grader
 				JavaCompiler comp = ToolProvider.getSystemJavaCompiler();
 				DiagnosticCollector<JavaFileObject> diag = new DiagnosticCollector<>();
 				StandardJavaFileManager fm = comp.getStandardFileManager(diag, null, null);
-				Iterable<? extends JavaFileObject> compU = fm.getJavaFileObjects(sourceCode);
-				JavaCompiler.CompilationTask task = comp.getTask(null, fm, diag, null, null, compU);
+				Iterable<? extends JavaFileObject> compU = fm.getJavaFileObjects(currentFile);
+				JavaCompiler.CompilationTask task = comp.getTask(new OutputStreamWriter(System.out), fm, diag, null, null, compU);
 				task.call();
 				fm.close();
-				currentCodeToBeGraded = ToolProvider.getSystemToolClassLoader().loadClass(className);
+				currentCodeToBeGraded = new FileClassLoader(currentFile.getParentFile()).loadClass(className);
 				mainMethod = currentCodeToBeGraded.getMethod("main", (new String[0]).getClass());
 			} catch (Error error)
 			{
-				log.error("{}", error.toString());
+				log.error("fatal comp error:\n{}", error.toString());
+				error.printStackTrace();
 				return new Either<>(-111, error.toString());
 			}
 
@@ -128,6 +129,7 @@ class Grader
 		} catch (Exception e)
 		{
 			log.error("{}", e.toString());
+			e.printStackTrace();
 			return new Either<>(-111, e.toString());
 		}
 
@@ -160,6 +162,55 @@ class Grader
 			if (iterator.hasNext())
 			return iterator.next();
 			return 0;
+		}
+	}
+
+	private static class FileClassLoader extends ClassLoader
+	{
+		File root;
+
+		FileClassLoader(File root)
+		{
+			this.root = root;
+		}
+
+		public Class findClass(String name)
+		{
+			byte[] b = loadClassData(name);
+			return defineClass(name, b, 0, b.length);
+		}
+
+		private byte[] loadClassData(String name)
+		{
+			ArrayList<Byte> bytes = new ArrayList<>();
+			File target = null;
+			for (File cur : root.listFiles())
+			{
+				if (cur.getName().equals(name + ".class"))
+				{
+					target = cur;
+					break;
+				}
+			}
+			try
+			{
+				FileInputStream in = new FileInputStream(target);
+				int x = 0;
+				while ((x = in.read()) != -1)
+				{
+					bytes.add((byte)x);
+				}
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			Byte[] Bytes = bytes.toArray(new Byte[]{});
+			byte[] b = new byte[Bytes.length];
+			for (int i = 0; i < Bytes.length; i++)
+			{
+				b[i] = Bytes[i].byteValue();
+			}
+			return b;
 		}
 	}
 }
