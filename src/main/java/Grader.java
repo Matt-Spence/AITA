@@ -53,8 +53,14 @@ class Grader
 				fm.close();
 				currentCodeToBeGraded = new FileClassLoader(currentFile.getParentFile()).loadClass(className);
 				mainMethod = currentCodeToBeGraded.getMethod("main", (new String[0]).getClass());
-			} catch (Error error)
+			}
+			catch (ClassFileNotFoundError e){
+				e.printStackTrace();
+				return new Either<>(-111, e.getMessage());
+			}
+			catch (Error error)
 			{
+
 				log.error("fatal comp error:\n{}", error.toString());
 				error.printStackTrace();
 				return new Either<>(-111, error.toString());
@@ -192,6 +198,8 @@ class Grader
 					break;
 				}
 			}
+
+			if(target == null) throw new ClassFileNotFoundError(name);
 			try
 			{
 				FileInputStream in = new FileInputStream(target);
@@ -200,6 +208,9 @@ class Grader
 				{
 					bytes.add((byte)x);
 				}
+				in.close();//cannot delete file if input stream is still open
+				target.delete();
+
 			} catch (IOException e)
 			{
 				e.printStackTrace();
@@ -213,6 +224,19 @@ class Grader
 			return b;
 		}
 	}
+
+	private static class ClassFileNotFoundError extends Error{
+		//More specific error than NullPointerException
+
+		ClassFileNotFoundError(){
+			super(".class file not found");
+		}
+
+		ClassFileNotFoundError(String str){
+			super(str+".class file not found");
+		}
+	}
+
 }
 
 

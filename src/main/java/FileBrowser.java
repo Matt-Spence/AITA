@@ -104,19 +104,19 @@ class MyFile extends VBox{
 		bool = false;
 
 		text = new Text(name);
-		text.setFont(new Font("monospace", 10));
+		text.setFont(new Font("monospace", 16));
 		btn = new Button();
 		btn.setBackground(Background.EMPTY);
-		btn.setMaxSize(16, 16);
-		btn.setMinSize(16, 16);
+		btn.setMaxSize(24, 24);
+		btn.setMinSize(24, 24);
 		pic = new ImageView();
 
 		secret = new StackPane();
 		secret.getChildren().add(stuff);
 		secret2 = new HBox();
 		realbtn = new Button();
-		realbtn.setMinHeight(16);
-		realbtn.setMaxHeight(16);
+		realbtn.setMinHeight(24);
+		realbtn.setMaxHeight(24);
 
 		realbtn.setMinWidth(text.getLayoutBounds().getWidth()+64+10);
 		realbtn.setMaxWidth(text.getLayoutBounds().getWidth()+64+10);
@@ -146,17 +146,17 @@ class Folder extends MyFile{
 		in.parent = this;
 		getChildren().add(in);
 
-		arrowOpen = new ImageView(new Image(this.getClass().getResource("arrow2.png").toString(), 16, 16, true, false));
-		arrowClosed = new ImageView(new Image(this.getClass().getResource("arrow1.png").toString(), 16, 16, true, false));
+		arrowOpen = new ImageView(new Image(this.getClass().getResource("arrow2.png").toString(), 24, 24, true, true));
+		arrowClosed = new ImageView(new Image(this.getClass().getResource("arrow1.png").toString(), 24, 24, true, true));
 
 		empty = !(f.listFiles(new emptyCheck()) != null && f.listFiles(new emptyCheck()).length>0);
 		if(!empty){
-			closed = new Image(this.getClass().getResource("folderClosed2.png").toString(), 16, 16, true, false);
-			open = new Image(this.getClass().getResource("folderOpen2.png").toString(), 16, 16, true, false);
+			closed = new Image(this.getClass().getResource("folderClosed2.png").toString(), 24, 24, true, true);
+			open = new Image(this.getClass().getResource("folderOpen2.png").toString(), 24, 24, true, true);
 		}
 		else{
-			closed = new Image(this.getClass().getResource("folderClosed.png").toString(), 16, 16, true, false);
-			open = new Image(this.getClass().getResource("folderOpen.png").toString(), 16, 16, true, false);
+			closed = new Image(this.getClass().getResource("folderClosed.png").toString(), 24, 24, true, true);
+			open = new Image(this.getClass().getResource("folderOpen.png").toString(), 24, 24, true, true);
 		}
 
 		//btn.setText(">");
@@ -222,10 +222,10 @@ class AFile extends MyFile{
 	public AFile(File f){
 		super(f);
 
-		imgFile = new Image(this.getClass().getResource("file.png").toString(), 16, 16, true, false);
-		imgJava = new Image(this.getClass().getResource("java.png").toString(), 16, 16, true, false);
-		check = new ImageView(new Image(this.getClass().getResource("check.png").toString(), 16, 16, true, false));
-		uncheck = new ImageView(new Image(this.getClass().getResource("uncheck.png").toString(), 16, 16, true, false));
+		imgFile = new Image(this.getClass().getResource("file.png").toString(), 24, 24, true, true);
+		imgJava = new Image(this.getClass().getResource("java.png").toString(), 24, 24, true, true);
+		check = new ImageView(new Image(this.getClass().getResource("check.png").toString(), 24, 24, true, true));
+		uncheck = new ImageView(new Image(this.getClass().getResource("uncheck.png").toString(), 24, 24, true, true));
 
 		//btn.setText("_");
 		btn.setGraphic(uncheck);
@@ -272,20 +272,20 @@ class AFileClone extends StackPane{
 		img = new ImageView(o.pic.getImage());
 		fakebtn = new Button();
 		fakebtn.setBackground(Background.EMPTY);
-		fakebtn.setMaxSize(16, 16);
-		fakebtn.setMinSize(16, 16);
-		fakebtn.setGraphic(new ImageView(new Image(this.getClass().getResource("check.png").toString(), 16, 16, true, false)));
+		fakebtn.setMaxSize(24, 24);
+		fakebtn.setMinSize(24, 24);
+		fakebtn.setGraphic(new ImageView(new Image(this.getClass().getResource("check.png").toString(), 24, 24, true, true)));
 		if(o.name.length() > 20){
 			text = new Text(o.name.substring(0,21)+ "...");
 		}
 		else{
 			text = new Text(o.name);
 		}
-		text.setFont(new Font("monospace", 10));
+		text.setFont(new Font("monospace", 16));
 
 		realbtn = new Button();
-		realbtn.setMinHeight(16);
-		realbtn.setMaxHeight(16);
+		realbtn.setMinHeight(32);
+		realbtn.setMaxHeight(32);
 		realbtn.setMinWidth(o.text.getLayoutBounds().getWidth()+64+10);
 		realbtn.setMaxWidth(o.text.getLayoutBounds().getWidth()+64+10);
 		realbtn.setBackground(Background.EMPTY);
