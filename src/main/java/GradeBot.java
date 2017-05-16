@@ -1,7 +1,9 @@
+import javax.xml.transform.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 
 public class GradeBot
@@ -121,24 +123,14 @@ public class GradeBot
 	 * Does the actual work of grading the files
 	 * @return A HashMap mapping each file's path to either their score or the error
 	 */
-	public HashMap<String, String> grade()
+	public LinkedList<Result> grade()
 	{
 		PrintStream err = System.err;
 		System.setErr(logOut);
-		HashMap<String, String> grades = new HashMap<>();
+		LinkedList<Result> grades = new LinkedList<>();
 		for (File currentFile : sourceCode)
 		{
-			Either<Integer, String> result = Grader.grade(currentFile, inputFile, correctOutputFile, ignoreWhiteSpace, ignoreSymbolCharacters, searchStrings);
-			if (result.getLeft() == -111)
-			{
-				grades.put(currentFile.getAbsolutePath(), result.getRight());
-			} else if (result.getLeft() < 0)
-			{
-				grades.put(currentFile.getAbsolutePath(), "Incorrect output, score: " + -result.getLeft());
-			} else
-			{
-				grades.put(currentFile.getAbsolutePath(), result.getLeft().toString());
-			}
+			grades.add(Grader.grade(currentFile, inputFile, correctOutputFile, ignoreWhiteSpace, ignoreSymbolCharacters, searchStrings));
 		}
 		System.setErr(err);
 		return grades;

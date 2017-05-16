@@ -11,8 +11,21 @@ import java.util.*;
 class Grader
 {
 	static Logger log = LoggerFactory.getLogger(Grader.class);
-	static Either<Integer, String> grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
+	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
 	{
+		StringBuilder sourceCodeBuild = new StringBuilder();
+		try
+		{
+			Scanner sourceReader = new Scanner(currentFile);
+			while (sourceReader.hasNextLine())
+			{
+				sourceCodeBuild.append(sourceReader.nextLine());
+				sourceCodeBuild.append("\n");
+			}
+		} catch (FileNotFoundException e)
+		{
+			return new Result(currentFile.getAbsolutePath(), "<- That file wasn't found" , "No code", e.toString(), "No output" );
+		}
 		try
 		{
 			InputStream sin = System.in;
@@ -22,21 +35,6 @@ class Grader
 			PrintStream out = new PrintStream(stream);
 
 			Integer score = 100;
-
-			Scanner sourceReader = new Scanner(currentFile);
-			StringBuilder sourceCodeBuild = new StringBuilder();
-			while (sourceReader.hasNextLine())
-			{
-				sourceCodeBuild.append(sourceReader.nextLine());
-				sourceCodeBuild.append("\n");
-			}
-
-			System.setOut(out);
-			if (inputFile != null)
-			{
-				InputStream in = new FileInputStream(inputFile);
-				System.setIn(in);
-			}
 
 			String sourceCode = sourceCodeBuild.toString();
 			String className = currentFile.getName().replaceFirst("[.][^.]+$", "");
@@ -56,9 +54,10 @@ class Grader
 			} catch (Error error)
 			{
 				log.error("{}", error.toString());
-				return new Either<>(-111, error.toString());
+				return new Result(currentFile.getAbsolutePath(), "Compilation error", sourceCode, error.toString(),"No Output" );
 			}
 
+			System.setOut(out);
 			mainMethod.invoke(currentCodeToBeGraded, (Object) new String[]{});
 			String actualResult = stream.toString(Charset.defaultCharset().toString());
 			System.setOut(sout);
@@ -119,16 +118,18 @@ class Grader
 			if (!actualResult.equals(expectedResult))
 			{
 				log.debug("expected:\n{}\n\n actual:\n{}", new Object[]{expectedResult, actualResult});
-				return new Either<>(-score, "Incorrect output");
+				return new Result(currentFile.getAbsolutePath(), new Integer(score).toString() , sourceCode, "No error", actualResult );
+
 			} else
 			{
-				return new Either<>(score, null);
+				return new Result(currentFile.getAbsolutePath(), new Integer(score).toString() , sourceCode, "No error", actualResult );
 			}
 
 		} catch (Exception e)
 		{
 			log.error("{}", e.toString());
-			return new Either<>(-111, e.toString());
+			return new Result(currentFile.getAbsolutePath(), "Runtime error" , sourceCodeBuild.toString(), "No error", "No output" );
+
 		}
 
 	}
