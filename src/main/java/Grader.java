@@ -52,10 +52,6 @@ class Grader
 				currentCodeToBeGraded = new FileClassLoader(currentFile.getParentFile()).loadClass(className);
 				mainMethod = currentCodeToBeGraded.getMethod("main", (new String[0]).getClass());
 			}
-			catch (ClassFileNotFoundError e){
-				e.printStackTrace();
-				return new Either<>(-111, e.getMessage());
-			}
 			catch (Error error)
 			{
 				log.error("{}", error.toString());
