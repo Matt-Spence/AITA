@@ -24,7 +24,7 @@ public class GraderTest
 				"\t\tScanner in = new Scanner(System.in);\n" +
 				"\t\tfor (int i = 0; i < 4; i++)\n" +
 				"\t\t{\n" +
-				"\t\t\tSystem.out.println(in.next());\n" +
+				"\t\t\tSystem.out.println(in.nextLine());\n" +
 				"\t\t}\n" +
 				"\t}\n" +
 				"}\n");
@@ -33,7 +33,7 @@ public class GraderTest
 
 		File testIn = File.createTempFile("TestInput", "txt");
 		BufferedWriter testInOut = new BufferedWriter(new FileWriter(testIn));
-		testInOut.write("1\n2\n3\n4");
+		testInOut.write("1\n2\n3\n4\n");
 		testInOut.close();
 		testIn.deleteOnExit();
 
@@ -41,7 +41,7 @@ public class GraderTest
 		File testOut = File.createTempFile("TestOutput", "txt");
 		testSrc.deleteOnExit();
 		BufferedWriter testOutOut = new BufferedWriter(new FileWriter(testOut));
-		testOutOut.write("1\n2\n3\n4");
+		testOutOut.write("1\n2\n3\n4\n");
 		testOutOut.close();
 		testOut.deleteOnExit();
 
@@ -49,8 +49,8 @@ public class GraderTest
 		testSearchStrings.put("for *\\(.*\\)", 1);
 		testSearchStrings.put("while *\\(.*\\)", 2);
 		Either<Integer, String> result = Grader.grade(testSrc, testIn, testOut, false, false, testSearchStrings);
-		//assertEquals(98, result.getLeft().intValue());
-		//assertEquals(null, result.getRight());
+		assertEquals(98, result.getLeft().intValue());
+		assertEquals(null, result.getRight());
 	}
 
 	@Test
@@ -112,7 +112,7 @@ public class GraderTest
 		@Test
 	public void testGradeBot() throws Exception
 	{
-		File testSrc = new File("/home/dominik/test.java");
+		File testSrc = new File("C:/Users/Jonathan/test.java");
 		BufferedWriter testSrcOut = new BufferedWriter(new FileWriter(testSrc));
 		testSrcOut.write("public class test\n" +
 				"{\n" +
@@ -143,11 +143,11 @@ public class GraderTest
 		AITA.setSourceCode(new File[]{testSrc});
 		AITA.setInputFile(testIn);
 		AITA.setCorrectOutputFile(testOut);
-		AITA.setIgnoreWhiteSpace(false);
+		AITA.setIgnoreWhiteSpace(true);
 		AITA.setIgnoreSymbolCharacters(false);
 		AITA.setSearchStrings(testSearchStrings);
 
-//		AITA.grade().forEach((String x, String y) -> assertEquals("98", y));
+		AITA.grade().forEach((String x, String y) -> assertEquals("98", y));
 	}
 
 	@Test
@@ -177,9 +177,9 @@ public class GraderTest
 		testSearchStrings.put("for *\\(.*\\)", 1);
 		testSearchStrings.put("while *\\(.*\\)", 2);
 
-		Either<Integer, String> result = Grader.grade(testSrc, null, testOut, false, false, testSearchStrings);
-//		assertEquals(98, result.getLeft().intValue());
-//		assertEquals(null, result.getRight());
+		Either<Integer, String> result = Grader.grade(testSrc, null, testOut, true, false, testSearchStrings);
+		assertEquals(98, result.getLeft().intValue());
+		assertEquals(null, result.getRight());
 	}
 
 	@Test
@@ -216,7 +216,7 @@ public class GraderTest
 		AITA.setIgnoreSymbolCharacters(false);
 		AITA.setSearchStrings(testSearchStrings);
 
-	//	AITA.grade().forEach((String x, String y) -> assertEquals("98", y));
+		AITA.grade().forEach((String x, String y) -> assertEquals("98", y));
 	}
 
 

@@ -1,4 +1,3 @@
-import javax.xml.transform.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -125,14 +124,11 @@ public class GradeBot
 	 */
 	public LinkedList<Result> grade()
 	{
-		PrintStream err = System.err;
-		System.setErr(logOut);
 		LinkedList<Result> grades = new LinkedList<>();
 		for (File currentFile : sourceCode)
 		{
 			grades.add(Grader.grade(currentFile, inputFile, correctOutputFile, ignoreWhiteSpace, ignoreSymbolCharacters, searchStrings));
 		}
-		System.setErr(err);
 		return grades;
 	}
 
