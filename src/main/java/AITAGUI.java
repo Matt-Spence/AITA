@@ -186,9 +186,11 @@ public class AITAGUI extends Application {
 		Iterator it = l.iterator();
 
 		VBox vb = new VBox();
+
         System.out.println("creating hboxes");
 		HBox[] hbox = new HBox[l.size()];
 		for(HBox h:hbox){
+			h = new HBox();
 		    System.out.println("generating Labels");
 		        Result e = (Result)it.next();
 			    Label path = new Label((String)e.getPath());
@@ -218,13 +220,27 @@ public class AITAGUI extends Application {
 
 		HBox main = new HBox();
 		VBox view = new VBox();
+		view.setMinWidth(480);
+		view.setMaxWidth(480);
+
 
 		ScrollPane codePane = new ScrollPane();
+		codePane.setMinHeight(480);
+		codePane.setMaxHeight(480);
+		codePane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		codePane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		codePane.setContent(new Label(r.getCode()));
-		ScrollPane stackTracePane = new ScrollPane();
-		stackTracePane.setContent(new Label(r.getErr()));
-		ScrollPane expectedOutputPane = new ScrollPane();
 
+		ScrollPane stackTracePane = new ScrollPane();
+		stackTracePane.setMinHeight(240);
+		stackTracePane.setMaxHeight(240);
+		stackTracePane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		stackTracePane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		stackTracePane.setContent(new Label(r.getErr()));
+
+		ScrollPane expectedOutputPane = new ScrollPane();
+		expectedOutputPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		expectedOutputPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		//scan input into expected output pane
         Scanner in = new Scanner(inputFile);
         StringBuilder sb = new StringBuilder();
@@ -232,13 +248,20 @@ public class AITAGUI extends Application {
             sb.append(in.nextLine());
             sb.append("\n");
         }
-
 		expectedOutputPane.setContent(new Label(sb.toString()));
+		expectedOutputPane.setMinWidth(240);
+		expectedOutputPane.setMaxWidth(240);
+
 		ScrollPane outPutPane = new ScrollPane(new Label(r.getOutput()));
+		outPutPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		outPutPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		outPutPane.setMinWidth(240);
+		outPutPane.setMaxWidth(240);
 
-		detailStage.setWidth(480);
-		detailStage.setHeight(480);
+		detailStage.setMinWidth(960);
+		detailStage.setMinHeight(720);
 
+		view.getChildren().addAll(codePane, stackTracePane);
 		main.getChildren().addAll(view, expectedOutputPane,outPutPane);
         detailStage.setScene(new Scene(main));
         detailStage.show();
