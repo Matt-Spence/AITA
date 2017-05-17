@@ -13,9 +13,11 @@ class Grader
 	static Logger log = LoggerFactory.getLogger(Grader.class);
 	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
 	{
+		System.out.println("Grade method triggered");
 		StringBuilder sourceCodeBuild = new StringBuilder();
 		try
 		{
+			System.out.println("creating scanner");
 			Scanner sourceReader = new Scanner(currentFile);
 			while (sourceReader.hasNextLine())
 			{
@@ -29,6 +31,7 @@ class Grader
 		}
 		try
 		{
+			System.out.println("Overwriting standard in");
 			InputStream sin = System.in;
 			PrintStream sout = System.out;
 
@@ -43,6 +46,7 @@ class Grader
 			Method mainMethod;
 			try
 			{
+				System.out.println("Whatever the fuck this is");
 				JavaCompiler comp = ToolProvider.getSystemJavaCompiler();
 				DiagnosticCollector<JavaFileObject> diag = new DiagnosticCollector<>();
 				StandardJavaFileManager fm = comp.getStandardFileManager(diag, null, null);
@@ -58,7 +62,8 @@ class Grader
 				log.error("{}", error.toString());
 				return new Result(currentFile.getAbsolutePath(), "Compilation error", sourceCode, error.toString(),"No Output" );
 			}
-
+			System.out.println("Setting System.out");
+			//problem somewhere between here
 			System.setOut(out);
 			mainMethod.invoke(currentCodeToBeGraded, (Object) new String[]{});
 			String actualResult = stream.toString(Charset.defaultCharset().toString());
@@ -70,7 +75,8 @@ class Grader
 				tmpOut.useDelimiter("\\z");
 				expectedResult = tmpOut.next();
 			}
-
+			//and here
+			System.out.println("Checking parameters");
 			if (ignoreWhiteSpace)
 			{
 				StringBuilder whitespaceStripper = new StringBuilder();
@@ -106,7 +112,7 @@ class Grader
 				}
 				expectedResult = expectedSymbolStripper.toString();
 			}
-
+			System.out.println("Checking for search strings");
 			for (Map.Entry<String, Integer> x : searchStrings.entrySet())
 			{
 				String pattern = "^[\\W\\w]*" + x.getKey() + "[\\W\\w]*$";

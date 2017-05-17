@@ -9,6 +9,8 @@ import javafx.collections.*;
 import javafx.scene.control.cell.*;
 import java.io.File;
 import javafx.scene.input.KeyEvent;
+
+import java.io.FileNotFoundException;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.application.*;
@@ -26,7 +28,7 @@ public class AITAGUI extends Application {
 	private List<File> labs = new ArrayList<>(10);
 	private int fileCount = 0;
 	private File output;
-	private File inputFile;
+	private static File inputFile;
 	RadioButton rb = new RadioButton("Check White Space");
 	RadioButton rb2 = new RadioButton("Check Symbols");
 	RadioButton rb3 = new RadioButton("Check for each loops");
@@ -136,8 +138,8 @@ public class AITAGUI extends Application {
 	}
 
 	public void submit(List<File> l){
+	    System.out.println("submit button pressed");
 		GradeBot AITA = GradeBot.getInstance();
-		System.out.println(l);
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
@@ -155,12 +157,14 @@ public class AITAGUI extends Application {
 			}
 			SearchStrings.put(s.substring(0,lastSpaceIndex),Integer.parseInt(s.substring(lastSpaceIndex+1)));
 		}
-
+        System.out.println("Setting search Strings");
 		AITA.setSearchStrings(SearchStrings);//hashmap of regex to search for; point value of that regex
 		if (rb3.isPressed()) {
 			AITA.addRawSearchString("for\\s*\\(.*:.*\\)", Integer.parseInt(point3.getText()));
 		}
-		HashMap<String, String> hm = AITA.grade();
+		System.out.println("grading labs");
+		LinkedList<Result> hm = AITA.grade();
+		System.out.println("labs graded");
 		displayResults(hm);
 	}
 
@@ -174,95 +178,77 @@ public class AITAGUI extends Application {
 		return toReturn;
 	}
 
-	public static void displayResults(HashMap<String, String> results) {
-		Scene scene = new Scene(new Group());
+	public static void displayResults(List<Result> l) {
+	    System.out.println("displaying results");
 		Stage resultStage = new Stage();
 		resultStage.setTitle("Results");
 
+		Iterator it = l.iterator();
 
-		ObservableList<result> data = FXCollections.observableArrayList();
-		results.forEach((String p, String r) -> {
-			data.add(new result(p, r));
-		});
+		VBox vb = new VBox();
+        System.out.println("creating hboxes");
+		HBox[] hbox = new HBox[l.size()];
+		for(HBox h:hbox){
+		    System.out.println("generating Labels");
+		        Result e = (Result)it.next();
+			    Label path = new Label((String)e.getPath());
+                Label result = new Label((String)e.getScore());
+                Button view = new Button("view");
+                view.setOnAction((final ActionEvent ae) -> {
+                    //view more
+                    try {
+                        displayDetails(e);
+                    } catch (FileNotFoundException e1) {
+                        e1.printStackTrace();
+                    }
+                });
+                h.getChildren().addAll(path,result,view);
+                vb.getChildren().add(h);
+		}
 
-		TableView<result> table = new TableView<result>();
 
-		TableColumn<result, String> result = new TableColumn("Result");
-		result.setMinWidth(500);
-		result.setCellValueFactory((p) -> {
-			result x = p.getValue();
-			return new SimpleStringProperty(
-					x.getScore() != null && x.getScore().length() > 0 ? x.getScore() : "<error>");
-		});
-
-		TableColumn<result, String> path = new TableColumn("Path");
-		path.setMinWidth(300);
-		path.setCellValueFactory((p) -> {
-			result x = p.getValue();
-			return new SimpleStringProperty(
-					x.getPath() != null && x.getPath().length() > 0 ? x.getPath() : "<error>");
-		});
-		TableColumn view = new TableColumn("    ");
-		view.setMinWidth(50);
-		view.setCellValueFactory(new PropertyValueFactory<>("viewButton"));
-
-		table.setItems(data);
-		table.getColumns().addAll(path, result, view);
-
-		VBox box = new VBox();
-		box.getChildren().add(table);
-		box.setAlignment(Pos.CENTER);
-
-		((Group) scene.getRoot()).getChildren().addAll(box);
-
-		resultStage.setScene(scene);
+		resultStage.setScene(new Scene(vb));
 		resultStage.show();
 	}
 
-	public static void displayDetails(result r){
-		Scene scene = new Scene(new Group());
+	public static void displayDetails(Result r) throws FileNotFoundException {
+	    System.out.println("displaying details");
 		Stage detailStage = new Stage();
-		detailStage.setTitle("Details");
+		detailStage.setTitle(r.getPath());
+
+		HBox main = new HBox();
+		VBox view = new VBox();
+
+		ScrollPane codePane = new ScrollPane();
+		codePane.setContent(new Label(r.getCode()));
+		ScrollPane stackTracePane = new ScrollPane();
+		stackTracePane.setContent(new Label(r.getErr()));
+		ScrollPane expectedOutputPane = new ScrollPane();
+
+		//scan input into expected output pane
+        Scanner in = new Scanner(inputFile);
+        StringBuilder sb = new StringBuilder();
+        while(in.hasNextLine()){
+            sb.append(in.nextLine());
+            sb.append("\n");
+        }
+
+		expectedOutputPane.setContent(new Label(sb.toString()));
+		ScrollPane outPutPane = new ScrollPane(new Label(r.getOutput()));
+
 		detailStage.setWidth(480);
 		detailStage.setHeight(480);
 
+		main.getChildren().addAll(view, expectedOutputPane,outPutPane);
+        detailStage.setScene(new Scene(main));
+        detailStage.show();
 	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
 
-	public class viewButton extends Button {
-		public viewButton(result r){
-			super("view");
-			setOnAction((event) -> {
-				displayDetails(r);
-			});
-		}
 
-	}
-
-	public class resultRow {
-		private SimpleStringProperty path;
-		private final SimpleObjectProperty<viewButton> viewButton;
-
-		public resultRow(result r){
-			this.path = new SimpleStringProperty(r.getPath());
-			viewButton = new SimpleObjectProperty(new viewButton(r));
-		}
-
-		public String getPath(){
-			return path.get();
-		}
-
-		public viewButton getViewButton(){
-			return viewButton.get();
-		}
-
-		public ObjectProperty<viewButton> viewButtonProperty() {
-			return viewButton;
-		}
-	}
 
 	public static String getEasterEgg() {
 		return "Let's grade some labs!";
@@ -273,26 +259,7 @@ public class AITAGUI extends Application {
 		fileCount++;
 	}
 
-	public static class result {
 
-		public SimpleStringProperty path;
-		public SimpleStringProperty score;
-
-		public result(String s, String n) {
-			path = new SimpleStringProperty(s);
-			score = new SimpleStringProperty(n);
-		}
-
-		public String getScore() {
-			return score.getValue();
-		}
-
-		public String getPath() {
-			return path.getValue();
-		}
-	}
-
-}
 
 class OptionList extends VBox{
 	public OptionList(){
@@ -356,4 +323,5 @@ class Option extends HBox{
 		return this;
 	}
 
+}
 }
