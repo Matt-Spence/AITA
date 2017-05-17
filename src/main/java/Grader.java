@@ -62,10 +62,26 @@ class Grader
 				log.error("{}", error.toString());
 				return new Result(currentFile.getAbsolutePath(), "Compilation error", sourceCode, error.toString(),"No Output" );
 			}
+
+
+			InputStream in;
+			if (inputFile != null)
+			{
+				in = new FileInputStream(inputFile);
+			}
+			else
+			{
+				in = sin;
+			}
+
+			System.out.println("Setting System.in");
+			System.setIn(in);
 			System.out.println("Setting System.out");
 			//problem somewhere between here
 			System.setOut(out);
+			System.err.println("invoking main method");
 			mainMethod.invoke(currentCodeToBeGraded, (Object) new String[]{});
+			System.err.println("invoked main method");
 			String actualResult = stream.toString(Charset.defaultCharset().toString());
 			System.setOut(sout);
 			System.setIn(sin);
