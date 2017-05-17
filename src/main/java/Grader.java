@@ -22,7 +22,8 @@ class Grader
 				sourceCodeBuild.append(sourceReader.nextLine());
 				sourceCodeBuild.append("\n");
 			}
-		} catch (FileNotFoundException e)
+		}
+		catch (FileNotFoundException e)
 		{
 			return new Result(currentFile.getAbsolutePath(), "<- That file wasn't found" , "No code", e.toString(), "No output" );
 		}
