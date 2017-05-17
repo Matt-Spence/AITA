@@ -138,8 +138,8 @@ public class AITAGUI extends Application {
 	}
 
 	public void submit(List<File> l){
+	    System.out.println("submit button pressed");
 		GradeBot AITA = GradeBot.getInstance();
-		System.out.println(l);
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
@@ -157,12 +157,14 @@ public class AITAGUI extends Application {
 			}
 			SearchStrings.put(s.substring(0,lastSpaceIndex),Integer.parseInt(s.substring(lastSpaceIndex+1)));
 		}
-
+        System.out.println("Setting search Strings");
 		AITA.setSearchStrings(SearchStrings);//hashmap of regex to search for; point value of that regex
 		if (rb3.isPressed()) {
 			AITA.addRawSearchString("for\\s*\\(.*:.*\\)", Integer.parseInt(point3.getText()));
 		}
+		System.out.println("grading labs");
 		LinkedList<Result> hm = AITA.grade();
+		System.out.println("labs graded");
 		displayResults(hm);
 	}
 
@@ -177,15 +179,17 @@ public class AITAGUI extends Application {
 	}
 
 	public static void displayResults(List<Result> l) {
+	    System.out.println("displaying results");
 		Stage resultStage = new Stage();
 		resultStage.setTitle("Results");
 
 		Iterator it = l.iterator();
 
 		VBox vb = new VBox();
-
+        System.out.println("creating hboxes");
 		HBox[] hbox = new HBox[l.size()];
 		for(HBox h:hbox){
+		    System.out.println("generating Labels");
 		        Result e = (Result)it.next();
 			    Label path = new Label((String)e.getPath());
                 Label result = new Label((String)e.getScore());
@@ -208,6 +212,7 @@ public class AITAGUI extends Application {
 	}
 
 	public static void displayDetails(Result r) throws FileNotFoundException {
+	    System.out.println("displaying details");
 		Stage detailStage = new Stage();
 		detailStage.setTitle(r.getPath());
 
