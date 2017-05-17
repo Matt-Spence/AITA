@@ -11,6 +11,15 @@ import java.util.*;
 class Grader
 {
 	static Logger log = LoggerFactory.getLogger(Grader.class);
+	/**
+	 * Does the actual act of grading.
+	 * @param currentFile the file that will be compiled and graded
+	 * @param inputFile the file that will be used as input
+	 * @param correctOutputFile the file that the program's
+	 * @param ignoreWhiteSpace if true it will ignore all whitespace, if false it won't
+	 * @param ignoreSymbolCharacters if true it will ignore all non-alphanumeric, if false it won't
+	 * @param searchStrings every regex string to compare against as a key, and it's score value
+	 */
 	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
 	{
 		System.out.println("Grade method triggered");
