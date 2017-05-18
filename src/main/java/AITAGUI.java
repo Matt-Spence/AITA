@@ -29,14 +29,11 @@ public class AITAGUI extends Application {
 	private int fileCount = 0;
 	private File output;
 	private static File inputFile;
-	RadioButton rb = new RadioButton("Check White Space");
-	RadioButton rb2 = new RadioButton("Check Symbols");
+	RadioButton rb = new RadioButton("Ignore White Space");
+	RadioButton rb2 = new RadioButton("Ignore Symbols");
 	RadioButton rb3 = new RadioButton("Check for each loops");
 	ScrollPane searchStringScrollPane = new ScrollPane();
 	OptionList ol = new OptionList();
-	TextField point1 = new TextField();
-	TextField point2 = new TextField();
-	TextField point3 = new TextField();
 
 	Text outText = new Text();
 	Text inText  = new Text();
@@ -93,9 +90,9 @@ public class AITAGUI extends Application {
 		HBox button2Box = new HBox();
 		HBox button3Box = new HBox();
 
-		button1Box.getChildren().addAll(rb, point1);
-		button2Box.getChildren().addAll(rb2, point2);
-		button3Box.getChildren().addAll(rb3, point3);
+		button1Box.getChildren().addAll(rb);
+		button2Box.getChildren().addAll(rb2);
+		button3Box.getChildren().addAll(rb3);
 		vb.getChildren().add(button1Box);
 		vb.getChildren().add(button2Box);
 		vb.getChildren().add(button3Box);
@@ -143,8 +140,8 @@ public class AITAGUI extends Application {
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
-		AITA.setIgnoreWhiteSpace(!rb.isPressed());
-		AITA.setIgnoreSymbolCharacters(!rb2.isPressed());
+		AITA.setIgnoreWhiteSpace(rb.isPressed());
+		AITA.setIgnoreSymbolCharacters(rb2.isPressed());
 		ArrayList<String> options = ol.getArrayList();
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
 		for(String s:options){
