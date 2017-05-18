@@ -30,6 +30,7 @@ public class AITAGUI extends Application {
 	RadioButton whiteSpaceRB = new RadioButton("Ignore White Space");
 	RadioButton symbolRB = new RadioButton("Ignore Symbols");
 	RadioButton forLoopRB = new RadioButton("Check for each loops");
+	TextField point3 = new TextField();
 	ScrollPane searchStringScrollPane = new ScrollPane();
 	OptionList optionList = new OptionList();
 	Text outText = new Text();
@@ -90,7 +91,8 @@ public class AITAGUI extends Application {
 		button1Box.getChildren().addAll(whiteSpaceRB);
 		button2Box.getChildren().addAll(symbolRB);
 		button3Box.getChildren().addAll(forLoopRB);
-
+		point3.setMaxWidth(50.0);
+		button3Box.getChildren().add(point3);
 		vb.getChildren().add(button1Box);
 		vb.getChildren().add(button2Box);
 		vb.getChildren().add(button3Box);
