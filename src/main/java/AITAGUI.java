@@ -143,8 +143,8 @@ public class AITAGUI extends Application {
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
-		AITA.setIgnoreWhiteSpace(rb.isPressed());
-		AITA.setIgnoreSymbolCharacters(rb2.isPressed());
+		AITA.setIgnoreWhiteSpace(!rb.isPressed());
+		AITA.setIgnoreSymbolCharacters(!rb2.isPressed());
 		ArrayList<String> options = ol.getArrayList();
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
 		for(String s:options){
@@ -179,33 +179,53 @@ public class AITAGUI extends Application {
 	}
 
 	public static void displayResults(List<Result> l) {
-	    System.out.println("displaying results");
+		System.out.println("displaying results");
 		Stage resultStage = new Stage();
 		resultStage.setTitle("Results");
 
 		Iterator it = l.iterator();
 
 		VBox vb = new VBox();
+		vb.setSpacing(10);
 
-        System.out.println("creating hboxes");
+
+		HBox titles = new HBox();
+		titles.setSpacing(10);
+		Label pathTitle = new Label("Files");
+		pathTitle.setMinWidth(480);
+		pathTitle.setMaxWidth(480);
+		Label resultTitle = new Label("Results");
+		resultTitle.setMinWidth(240);
+		resultTitle.setMaxWidth(240);
+		titles.getChildren().addAll(pathTitle, resultTitle);
+
+		vb.getChildren().add(titles);
+
+		System.out.println("creating hboxes");
 		HBox[] hbox = new HBox[l.size()];
 		for(HBox h:hbox){
 			h = new HBox();
-		    System.out.println("generating Labels");
-		        Result e = (Result)it.next();
-			    Label path = new Label((String)e.getPath());
-                Label result = new Label((String)e.getScore());
-                Button view = new Button("view");
-                view.setOnAction((final ActionEvent ae) -> {
-                    //view more
-                    try {
-                        displayDetails(e);
-                    } catch (FileNotFoundException e1) {
-                        e1.printStackTrace();
-                    }
-                });
-                h.getChildren().addAll(path,result,view);
-                vb.getChildren().add(h);
+			h.setSpacing(10);
+
+			System.out.println("generating Labels");
+			Result e = (Result)it.next();
+			Label path = new Label((String)e.getPath());
+			path.setMinWidth(480);
+			path.setMaxWidth(480);
+			Label result = new Label((String)e.getScore());
+			result.setMinWidth(240);
+			result.setMaxWidth(240);
+			Button view = new Button("view more");
+			view.setOnAction((final ActionEvent ae) -> {
+				//view more
+				try {
+					displayDetails(e);
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+			});
+			h.getChildren().addAll(path,result,view);
+			vb.getChildren().add(h);
 		}
 
 
@@ -214,7 +234,7 @@ public class AITAGUI extends Application {
 	}
 
 	public static void displayDetails(Result r) throws FileNotFoundException {
-	    System.out.println("displaying details");
+		System.out.println("displaying details");
 		Stage detailStage = new Stage();
 		detailStage.setTitle(r.getPath());
 
@@ -223,6 +243,20 @@ public class AITAGUI extends Application {
 		view.setMinWidth(480);
 		view.setMaxWidth(480);
 
+		VBox mainV = new VBox();
+
+
+		HBox titles = new HBox();
+		Label codeTitle = new Label("Source Code:");
+		codeTitle.setMinWidth(480);
+		codeTitle.setMaxWidth(480);
+		Label expectedOutputTitle = new Label("Expected Output:");
+		expectedOutputTitle.setMinWidth(240);
+		expectedOutputTitle.setMaxWidth(240);
+		Label outputTitle = new Label("Output:");
+		outputTitle.setMinWidth(240);
+		outputTitle.setMaxWidth(240);
+		titles.getChildren().addAll(codeTitle, outputTitle, expectedOutputTitle);
 
 		ScrollPane codePane = new ScrollPane();
 		codePane.setMinHeight(480);
@@ -238,33 +272,37 @@ public class AITAGUI extends Application {
 		stackTracePane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		stackTracePane.setContent(new Label(r.getErr()));
 
+
 		ScrollPane expectedOutputPane = new ScrollPane();
 		expectedOutputPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		expectedOutputPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		//scan input into expected output pane
-        Scanner in = new Scanner(inputFile);
-        StringBuilder sb = new StringBuilder();
-        while(in.hasNextLine()){
-            sb.append(in.nextLine());
-            sb.append("\n");
-        }
+		Scanner in = new Scanner(inputFile);
+		StringBuilder sb = new StringBuilder();
+		while(in.hasNextLine()){
+			sb.append(in.nextLine());
+			sb.append("\n");
+		}
 		expectedOutputPane.setContent(new Label(sb.toString()));
 		expectedOutputPane.setMinWidth(240);
 		expectedOutputPane.setMaxWidth(240);
 
-		ScrollPane outPutPane = new ScrollPane(new Label(r.getOutput()));
-		outPutPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-		outPutPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-		outPutPane.setMinWidth(240);
-		outPutPane.setMaxWidth(240);
+
+		ScrollPane outputPane = new ScrollPane(new Label(r.getOutput()));
+		outputPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		outputPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		outputPane.setMinWidth(240);
+		outputPane.setMaxWidth(240);
+
 
 		detailStage.setMinWidth(960);
 		detailStage.setMinHeight(720);
 
 		view.getChildren().addAll(codePane, stackTracePane);
-		main.getChildren().addAll(view, expectedOutputPane,outPutPane);
-        detailStage.setScene(new Scene(main));
-        detailStage.show();
+		main.getChildren().addAll(view, outputPane, expectedOutputPane);
+		mainV.getChildren().addAll(titles, main);
+		detailStage.setScene(new Scene(mainV));
+		detailStage.show();
 	}
 
 	public static void main(String[] args) {
