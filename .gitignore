@@ -1,2 +1,7 @@
 *.class
 .idea/*
+/AITA.iml
+.idea/
+AITA.iml
+logback.xml
+target/
