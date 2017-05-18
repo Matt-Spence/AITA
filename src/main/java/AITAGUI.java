@@ -143,8 +143,8 @@ public class AITAGUI extends Application {
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
-		AITA.setIgnoreWhiteSpace(rb.isPressed());
-		AITA.setIgnoreSymbolCharacters(rb2.isPressed());
+		AITA.setIgnoreWhiteSpace(!rb.isPressed());
+		AITA.setIgnoreSymbolCharacters(!rb2.isPressed());
 		ArrayList<String> options = ol.getArrayList();
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
 		for(String s:options){
