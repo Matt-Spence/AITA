@@ -87,15 +87,10 @@ public class AITAGUI extends Application {
 		HBox button2Box = new HBox();
 		HBox button3Box = new HBox();
 
-<<<<<<< HEAD
-		button1Box.getChildren().addAll(whiteSpaceRB, point1);
-		button2Box.getChildren().addAll(symbolRB, point2);
-		button3Box.getChildren().addAll(forLoopRB, point3);
-=======
-		button1Box.getChildren().addAll(rb);
-		button2Box.getChildren().addAll(rb2);
-		button3Box.getChildren().addAll(rb3);
->>>>>>> 2701f92cedfa10f007f9f8f6b220f667c42212ac
+		button1Box.getChildren().addAll(whiteSpaceRB);
+		button2Box.getChildren().addAll(symbolRB);
+		button3Box.getChildren().addAll(forLoopRB);
+
 		vb.getChildren().add(button1Box);
 		vb.getChildren().add(button2Box);
 		vb.getChildren().add(button3Box);
@@ -143,15 +138,9 @@ public class AITAGUI extends Application {
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
-<<<<<<< HEAD
-		AITA.setIgnoreWhiteSpace(!whiteSpaceRB.isPressed());
-		AITA.setIgnoreSymbolCharacters(!symbolRB.isPressed());
+		AITA.setIgnoreWhiteSpace(whiteSpaceRB.isPressed());
+		AITA.setIgnoreSymbolCharacters(symbolRB.isPressed());
 		ArrayList<String> options = optionList.getArrayList();
-=======
-		AITA.setIgnoreWhiteSpace(rb.isPressed());
-		AITA.setIgnoreSymbolCharacters(rb2.isPressed());
-		ArrayList<String> options = ol.getArrayList();
->>>>>>> 2701f92cedfa10f007f9f8f6b220f667c42212ac
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
 		for(String s:options){
 			int lastSpaceIndex = 0;
