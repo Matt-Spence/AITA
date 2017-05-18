@@ -102,8 +102,10 @@ class Grader
 			}
 			//and here
 			System.out.println("Checking parameters");
+
 			if (ignoreWhiteSpace)
 			{
+
 				StringBuilder whitespaceStripper = new StringBuilder();
 				for (char x : actualResult.toCharArray())
 				{
@@ -111,6 +113,7 @@ class Grader
 					{ whitespaceStripper.append(x); }
 				}
 				actualResult = whitespaceStripper.toString();
+
 				StringBuilder expectedWhitespaceStripper = new StringBuilder();
 				for (char x : expectedResult.toCharArray())
 				{
@@ -119,8 +122,10 @@ class Grader
 				}
 				expectedResult = expectedWhitespaceStripper.toString();
 			}
+
 			if (ignoreSymbolCharacters)
 			{
+
 				StringBuilder symbolStripper = new StringBuilder();
 				for (char x : actualResult.toCharArray())
 				{
@@ -137,6 +142,7 @@ class Grader
 				}
 				expectedResult = expectedSymbolStripper.toString();
 			}
+
 			System.out.println("Checking for search strings");
 			for (Map.Entry<String, Integer> x : searchStrings.entrySet())
 			{
@@ -148,10 +154,11 @@ class Grader
 					score -= value;
 				}
 			}
+
 			if (!actualResult.equals(expectedResult))
 			{
 				log.debug("expected:\n{}\n\n actual:\n{}", new Object[]{expectedResult, actualResult});
-				return new Result(currentFile.getAbsolutePath(), new Integer(score).toString() , sourceCode, "No error", actualResult );
+				return new Result(currentFile.getAbsolutePath(), "Incorrect Output" , sourceCode, "No error", actualResult );
 
 			} else
 			{
