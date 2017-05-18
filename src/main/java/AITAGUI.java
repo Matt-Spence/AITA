@@ -5,16 +5,14 @@
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.*;
-import javafx.collections.*;
-import javafx.scene.control.cell.*;
+
 import java.io.File;
 import javafx.scene.input.KeyEvent;
 
 import java.io.FileNotFoundException;
 import java.util.*;
-import javafx.beans.property.*;
+
 import javafx.application.*;
-import javafx.collections.FXCollections;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -29,11 +27,11 @@ public class AITAGUI extends Application {
 	private int fileCount = 0;
 	private File output;
 	private static File inputFile;
-	RadioButton rb = new RadioButton("Check White Space");
-	RadioButton rb2 = new RadioButton("Check Symbols");
-	RadioButton rb3 = new RadioButton("Check for each loops");
+	RadioButton whiteSpaceRB = new RadioButton("Check White Space");
+	RadioButton symbolRB = new RadioButton("Check Symbols");
+	RadioButton forLoopRB = new RadioButton("Check for each loops");
 	ScrollPane searchStringScrollPane = new ScrollPane();
-	OptionList ol = new OptionList();
+	OptionList optionList = new OptionList();
 	TextField point1 = new TextField();
 	TextField point2 = new TextField();
 	TextField point3 = new TextField();
@@ -46,7 +44,7 @@ public class AITAGUI extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("AITA");
 
-		searchStringScrollPane.setContent(ol);
+		searchStringScrollPane.setContent(optionList);
 		searchStringScrollPane.setMaxHeight(160);
 		searchStringScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		searchStringScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -85,7 +83,7 @@ public class AITAGUI extends Application {
 		//create file selector
 		FileBrowser fb = new FileBrowser(this);
 		hb.getChildren().add(fb);
-		hb.getChildren().add(ol);
+		hb.getChildren().add(optionList);
 		hb.getChildren().add(vb);
 
 		// add buttons
@@ -93,9 +91,9 @@ public class AITAGUI extends Application {
 		HBox button2Box = new HBox();
 		HBox button3Box = new HBox();
 
-		button1Box.getChildren().addAll(rb, point1);
-		button2Box.getChildren().addAll(rb2, point2);
-		button3Box.getChildren().addAll(rb3, point3);
+		button1Box.getChildren().addAll(whiteSpaceRB, point1);
+		button2Box.getChildren().addAll(symbolRB, point2);
+		button3Box.getChildren().addAll(forLoopRB, point3);
 		vb.getChildren().add(button1Box);
 		vb.getChildren().add(button2Box);
 		vb.getChildren().add(button3Box);
@@ -143,9 +141,9 @@ public class AITAGUI extends Application {
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
-		AITA.setIgnoreWhiteSpace(!rb.isPressed());
-		AITA.setIgnoreSymbolCharacters(!rb2.isPressed());
-		ArrayList<String> options = ol.getArrayList();
+		AITA.setIgnoreWhiteSpace(!whiteSpaceRB.isPressed());
+		AITA.setIgnoreSymbolCharacters(!symbolRB.isPressed());
+		ArrayList<String> options = optionList.getArrayList();
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
 		for(String s:options){
 			int lastSpaceIndex = 0;
@@ -159,7 +157,7 @@ public class AITAGUI extends Application {
 		}
         System.out.println("Setting search Strings");
 		AITA.setSearchStrings(SearchStrings);//hashmap of regex to search for; point value of that regex
-		if (rb3.isPressed()) {
+		if (forLoopRB.isPressed()) {
 			AITA.addRawSearchString("for\\s*\\(.*:.*\\)", Integer.parseInt(point3.getText()));
 		}
 		System.out.println("grading labs");
