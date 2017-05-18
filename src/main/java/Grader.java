@@ -157,7 +157,7 @@ class Grader
 
 			if (!actualResult.equals(expectedResult))
 			{
-				log.debug("expected:\n{}\n\n actual:\n{}", new Object[]{expectedResult, actualResult});
+				System.err.printf("expected:%n%s%n%n actual:%n%s", expectedResult, actualResult);
 				return new Result(currentFile.getAbsolutePath(), "Incorrect Output" , sourceCode, "No error", actualResult );
 
 			} else
