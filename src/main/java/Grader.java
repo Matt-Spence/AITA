@@ -94,6 +94,7 @@ class Grader
 			String actualResult = stream.toString(Charset.defaultCharset().toString());
 			System.setOut(sout);
 			System.setIn(sin);
+			String modifiedResult = actualResult;
 			String expectedResult;
 			{
 				Scanner tmpOut = new Scanner(correctOutputFile);
@@ -107,7 +108,7 @@ class Grader
 			{
 
 				StringBuilder whitespaceStripper = new StringBuilder();
-				for (char x : actualResult.toCharArray())
+				for (char x : modifiedResult.toCharArray())
 				{
 					if (!Character.isWhitespace(x))
 					{ whitespaceStripper.append(x); }
@@ -120,14 +121,14 @@ class Grader
 					if (!Character.isWhitespace(x))
 					{ expectedWhitespaceStripper.append(x); }
 				}
-				expectedResult = expectedWhitespaceStripper.toString();
+				modifiedResult = expectedWhitespaceStripper.toString();
 			}
 
 			if (ignoreSymbolCharacters)
 			{
 
 				StringBuilder symbolStripper = new StringBuilder();
-				for (char x : actualResult.toCharArray())
+				for (char x : modifiedResult.toCharArray())
 				{
 					if (Character.isWhitespace(x) || Character.isLetterOrDigit(x))
 					{ symbolStripper.append(x); }
@@ -140,7 +141,7 @@ class Grader
 					if (Character.isWhitespace(x) || Character.isLetterOrDigit(x))
 					{ expectedSymbolStripper.append(x); }
 				}
-				expectedResult = expectedSymbolStripper.toString();
+				modifiedResult = expectedSymbolStripper.toString();
 			}
 
 			System.out.println("Checking for search strings");
@@ -150,12 +151,11 @@ class Grader
 				Integer value = x.getValue();
 				if (!sourceCode.matches(pattern))
 				{
-
 					score -= value;
 				}
 			}
 
-			if (!actualResult.equals(expectedResult))
+			if (!modifiedResult.equals(expectedResult))
 			{
 				System.err.printf("expected:%n%s%n%n actual:%n%s", expectedResult, actualResult);
 				return new Result(currentFile.getAbsolutePath(), "Incorrect Output" , sourceCode, "No error", actualResult );
