@@ -141,17 +141,10 @@ public class AITAGUI extends Application {
 		AITA.setCorrectOutputFile(output);
 		AITA.setIgnoreWhiteSpace(whiteSpaceRB.isSelected());
 		AITA.setIgnoreSymbolCharacters(symbolRB.isSelected());
-		ArrayList<String> options = optionList.getArrayList();
+		ArrayList<SearchString> options = optionList.getArrayList();
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
-		for(String s:options){
-			int lastSpaceIndex = 0;
-			for(int i = s.length()-1; i > 0; i++){
-				if(s.charAt(i) == ' '){
-					lastSpaceIndex = i;
-					break;
-				}
-			}
-			SearchStrings.put(s.substring(0,lastSpaceIndex),Integer.parseInt(s.substring(lastSpaceIndex+1)));
+		for(SearchString s:options){
+			SearchStrings.put(s.getRegex(),s.getValue());
 		}
 		AITA.setSearchStrings(SearchStrings);//hashmap of regex to search for; point value of that regex
 		if (forLoopRB.isPressed()) {
@@ -334,7 +327,7 @@ class OptionList extends VBox{
 		for(Node n:getChildren()){
 			if(n instanceof Label || n instanceof HBox) continue;
 			if(!((Option)n).text.getText().equals("")){
-				r.add(new SearchString( ((Option)n).text.getText(),((Option)n).value.getText() );
+				r.add(new SearchString( ((Option)n).text.getText(),((Option)n).value.getText()));
 			}
 
 		}
