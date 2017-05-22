@@ -90,11 +90,10 @@ class Grader
 			System.setOut(out);
 
 			mainMethod.invoke(currentCodeToBeGraded, (Object) new String[]{});
-
 			String actualResult = stream.toString(Charset.defaultCharset().toString());
 			System.setOut(sout);
 			System.setIn(sin);
-			String modifiedResult = actualResult;
+			String modifiedResult = new String(actualResult);
 			String expectedResult;
 			{
 				Scanner tmpOut = new Scanner(correctOutputFile);
@@ -112,7 +111,7 @@ class Grader
 					if (!Character.isWhitespace(x))
 					{ whitespaceStripper.append(x); }
 				}
-				actualResult = whitespaceStripper.toString();
+				modifiedResult = whitespaceStripper.toString();
 
 				StringBuilder expectedWhitespaceStripper = new StringBuilder();
 				for (char x : expectedResult.toCharArray())
@@ -120,7 +119,7 @@ class Grader
 					if (!Character.isWhitespace(x))
 					{ expectedWhitespaceStripper.append(x); }
 				}
-				modifiedResult = expectedWhitespaceStripper.toString();
+				expectedResult = expectedWhitespaceStripper.toString();
 			}
 
 			if (ignoreSymbolCharacters)
@@ -132,7 +131,7 @@ class Grader
 					if (Character.isWhitespace(x) || Character.isLetterOrDigit(x))
 					{ symbolStripper.append(x); }
 				}
-				actualResult = symbolStripper.toString();
+				modifiedResult = symbolStripper.toString();
 
 				StringBuilder expectedSymbolStripper = new StringBuilder();
 				for (char x : expectedResult.toCharArray())
@@ -140,7 +139,7 @@ class Grader
 					if (Character.isWhitespace(x) || Character.isLetterOrDigit(x))
 					{ expectedSymbolStripper.append(x); }
 				}
-				modifiedResult = expectedSymbolStripper.toString();
+				expectedResult = expectedSymbolStripper.toString();
 			}
 
 			for (Map.Entry<String, Integer> x : searchStrings.entrySet())
