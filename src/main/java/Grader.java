@@ -22,11 +22,11 @@ class Grader
 	 */
 	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
 	{
-		System.out.println("Grade method triggered");
+
 		StringBuilder sourceCodeBuild = new StringBuilder();
 		try
 		{
-			System.out.println("creating scanner");
+
 			Scanner sourceReader = new Scanner(currentFile);
 			while (sourceReader.hasNextLine())
 			{
@@ -40,7 +40,7 @@ class Grader
 		}
 		try
 		{
-			System.out.println("Overwriting standard in");
+
 			InputStream sin = System.in;
 			PrintStream sout = System.out;
 
@@ -55,7 +55,7 @@ class Grader
 			Method mainMethod;
 			try
 			{
-				System.out.println("Whatever the fuck this is");
+
 				JavaCompiler comp = ToolProvider.getSystemJavaCompiler();
 				DiagnosticCollector<JavaFileObject> diag = new DiagnosticCollector<>();
 				StandardJavaFileManager fm = comp.getStandardFileManager(diag, null, null);
@@ -83,14 +83,14 @@ class Grader
 				in = sin;
 			}
 
-			System.out.println("Setting System.in");
+
 			System.setIn(in);
-			System.out.println("Setting System.out");
+
 			//problem somewhere between here
 			System.setOut(out);
-			System.err.println("invoking main method");
+
 			mainMethod.invoke(currentCodeToBeGraded, (Object) new String[]{});
-			System.err.println("invoked main method");
+
 			String actualResult = stream.toString(Charset.defaultCharset().toString());
 			System.setOut(sout);
 			System.setIn(sin);
@@ -101,11 +101,10 @@ class Grader
 				expectedResult = tmpOut.next();
 			}
 			//and here
-			System.out.println("Checking parameters");
 
 			if (ignoreWhiteSpace)
 			{
-
+				System.err.println("Ignoring White Space");
 				StringBuilder whitespaceStripper = new StringBuilder();
 				for (char x : actualResult.toCharArray())
 				{
@@ -125,7 +124,7 @@ class Grader
 
 			if (ignoreSymbolCharacters)
 			{
-
+				System.err.println("Ignoring Symbols");
 				StringBuilder symbolStripper = new StringBuilder();
 				for (char x : actualResult.toCharArray())
 				{
@@ -143,7 +142,6 @@ class Grader
 				expectedResult = expectedSymbolStripper.toString();
 			}
 
-			System.out.println("Checking for search strings");
 			for (Map.Entry<String, Integer> x : searchStrings.entrySet())
 			{
 				String pattern = "^[\\W\\w]*" + x.getKey() + "[\\W\\w]*$";
@@ -157,7 +155,7 @@ class Grader
 
 			if (!actualResult.equals(expectedResult))
 			{
-				System.err.printf("expected:%n%s%n%n actual:%n%s", expectedResult, actualResult);
+				System.err.printf("expected:%n%s%n%nactual:%n%s", expectedResult, actualResult);
 				return new Result(currentFile.getAbsolutePath(), "Incorrect Output" , sourceCode, "No error", actualResult );
 
 			} else

@@ -2,6 +2,7 @@
  * Created by Matth_000 on 2/14/2017.
  */
 
+import javafx.collections.ObservableList;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.*;
@@ -135,13 +136,12 @@ public class AITAGUI extends Application {
 	}
 
 	public void submit(List<File> l){
-	    System.out.println("submit button pressed");
 		GradeBot AITA = GradeBot.getInstance();
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
-		AITA.setIgnoreWhiteSpace(whiteSpaceRB.isPressed());
-		AITA.setIgnoreSymbolCharacters(symbolRB.isPressed());
+		AITA.setIgnoreWhiteSpace(whiteSpaceRB.isSelected());
+		AITA.setIgnoreSymbolCharacters(symbolRB.isSelected());
 		ArrayList<String> options = optionList.getArrayList();
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
 		for(String s:options){
@@ -154,14 +154,11 @@ public class AITAGUI extends Application {
 			}
 			SearchStrings.put(s.substring(0,lastSpaceIndex),Integer.parseInt(s.substring(lastSpaceIndex+1)));
 		}
-        System.out.println("Setting search Strings");
 		AITA.setSearchStrings(SearchStrings);//hashmap of regex to search for; point value of that regex
 		if (forLoopRB.isPressed()) {
 			AITA.addRawSearchString("for\\s*\\(.*:.*\\)", Integer.parseInt(point3.getText()));
 		}
-		System.out.println("grading labs");
 		LinkedList<Result> hm = AITA.grade();
-		System.out.println("labs graded");
 		displayResults(hm);
 	}
 
@@ -176,7 +173,6 @@ public class AITAGUI extends Application {
 	}
 
 	public static void displayResults(List<Result> l) {
-		System.out.println("displaying results");
 		Stage resultStage = new Stage();
 		resultStage.setTitle("Results");
 
@@ -198,13 +194,11 @@ public class AITAGUI extends Application {
 
 		vb.getChildren().add(titles);
 
-		System.out.println("creating hboxes");
 		HBox[] hbox = new HBox[l.size()];
 		for(HBox h:hbox){
 			h = new HBox();
 			h.setSpacing(10);
 
-			System.out.println("generating Labels");
 			Result e = (Result)it.next();
 			Label path = new Label((String)e.getPath());
 			path.setMinWidth(480);
@@ -231,7 +225,6 @@ public class AITAGUI extends Application {
 	}
 
 	public static void displayDetails(Result r) throws FileNotFoundException {
-		System.out.println("displaying details");
 		Stage detailStage = new Stage();
 		detailStage.setTitle(r.getPath());
 
@@ -320,7 +313,12 @@ public class AITAGUI extends Application {
 
 
 class OptionList extends VBox{
+
+	Label title;
+
 	public OptionList(){
+		title = new Label("Things to check:");
+		getChildren().add(title);
 		add();
 	}
 
@@ -335,6 +333,7 @@ class OptionList extends VBox{
 	public ArrayList<String> getArrayList(){
 		ArrayList<String> r = new ArrayList<>();
 		for(Node n:getChildren()){
+			if(n instanceof Label) continue;
 			if(!((Option)n).text.getText().equals("")){
 				r.add(((Option)n).text.getText());
 			}
@@ -348,8 +347,10 @@ class OptionList extends VBox{
 class Option extends HBox{
 	TextField text;
 	Button remove;
+	ComboBox<String> presets;
+	ArrayList<String> presetRegex;
 	boolean fresh;
-	Parent parent;
+	OptionList parent;
 
 	public Option(OptionList p){
 		parent = p;
@@ -358,11 +359,7 @@ class Option extends HBox{
 		text.setOnKeyTyped(new EventHandler<KeyEvent>(){
 			@Override
 			public void handle(KeyEvent event) {
-				if(fresh){
-					fresh = false;
-					getChildren().add(remove);
-					p.add();
-				}
+				unfresh();
 			}
 		});
 		remove = new Button();
@@ -374,7 +371,44 @@ class Option extends HBox{
 			}
 		});
 
-		getChildren().add(text);
+
+		presets = new ComboBox();
+		presetRegex = new ArrayList<>();
+
+		//default nothing
+		presets.getItems().add("");
+		presetRegex.add("");
+
+		//test 1
+		presets.getItems().add("test1");
+		presetRegex.add("regex for test 1");
+
+		//test 2
+		presets.getItems().add("test2");
+		presetRegex.add("regex for test 2");
+
+		//test 3
+		presets.getItems().add("test3");
+		presetRegex.add("regex for test 3");
+
+		presets.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event){
+				unfresh();
+				text.setText( presetRegex.get(presets.getItems().indexOf(presets.getValue())) );
+			}
+		});
+
+		getChildren().addAll(text, presets);
+	}
+
+	public void unfresh(){
+		if(fresh){
+			fresh = false;
+
+			getChildren().add(remove);
+			parent.add();
+		}
 	}
 
 	private Option self(){
