@@ -333,7 +333,7 @@ class OptionList extends VBox{
 	public ArrayList<String> getArrayList(){
 		ArrayList<String> r = new ArrayList<>();
 		for(Node n:getChildren()){
-			if(n instanceof Label) continue;
+			if(n instanceof Label || n instanceof HBox) continue;
 			if(!((Option)n).text.getText().equals("")){
 				r.add(((Option)n).text.getText());
 			}
@@ -345,18 +345,29 @@ class OptionList extends VBox{
 }
 
 class Option extends HBox{
+	TextField points;
 	TextField text;
-	Button remove;
 	ComboBox<String> presets;
 	ArrayList<String> presetRegex;
+	Button remove;
 	boolean fresh;
 	OptionList parent;
+
+
 
 	public Option(OptionList p){
 		parent = p;
 		fresh = true;
 		text = new TextField();
 		text.setOnKeyTyped(new EventHandler<KeyEvent>(){
+			@Override
+			public void handle(KeyEvent event) {
+				unfresh();
+			}
+		});
+		points = new TextField();
+		points.setMaxWidth(40);
+		points.setOnKeyTyped(new EventHandler<KeyEvent>(){
 			@Override
 			public void handle(KeyEvent event) {
 				unfresh();
@@ -399,7 +410,7 @@ class Option extends HBox{
 			}
 		});
 
-		getChildren().addAll(text, presets);
+		getChildren().addAll(points, text, presets);
 	}
 
 	public void unfresh(){
@@ -416,4 +427,53 @@ class Option extends HBox{
 	}
 
 }
+
+class SearchString{
+	String regex;
+	int value;
+
+	public SearchString(String regex, String value){
+		this.regex = regex;
+		try
+		{
+			this.value = value.isEmpty() ? 0 : Integer.parseInt(value);
+		}
+		catch(NumberFormatException e){
+			this.value = 0;
+		}
+	}
+
+	public SearchString(String regex, int value){
+		this.regex = regex;
+		this.value = value;
+	}
+
+	public String getRegex(){
+		return regex;
+	}
+
+	public int getValue(){
+		return value;
+	}
+
+	public void setRegex(String regex){
+		this.regex = regex;
+	}
+
+	public void setValue(int value){
+		this.value = value;
+	}
+
+	public void setValue(String value){
+		try
+		{
+			this.value = value.isEmpty() ? 0 : Integer.parseInt(value);
+		}
+		catch(NumberFormatException e){
+			this.value = 0;
+		}
+	}
+
+}
+
 }
