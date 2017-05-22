@@ -135,33 +135,22 @@ public class AITAGUI extends Application {
 	}
 
 	public void submit(List<File> l){
-	    System.out.println("submit button pressed");
 		GradeBot AITA = GradeBot.getInstance();
 		AITA.setSourceCode(toFileArray(l));
 		AITA.setInputFile(inputFile);
 		AITA.setCorrectOutputFile(output);
-		AITA.setIgnoreWhiteSpace(whiteSpaceRB.isPressed());
-		AITA.setIgnoreSymbolCharacters(symbolRB.isPressed());
-		ArrayList<String> options = optionList.getArrayList();
+		AITA.setIgnoreWhiteSpace(whiteSpaceRB.isSelected());
+		AITA.setIgnoreSymbolCharacters(symbolRB.isSelected());
+		ArrayList<SearchString> options = optionList.getArrayList();
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
-		for(String s:options){
-			int lastSpaceIndex = 0;
-			for(int i = s.length()-1; i > 0; i++){
-				if(s.charAt(i) == ' '){
-					lastSpaceIndex = i;
-					break;
-				}
-			}
-			SearchStrings.put(s.substring(0,lastSpaceIndex),Integer.parseInt(s.substring(lastSpaceIndex+1)));
+		for(SearchString s:options){
+			SearchStrings.put(s.getRegex(),s.getValue());
 		}
-        System.out.println("Setting search Strings");
 		AITA.setSearchStrings(SearchStrings);//hashmap of regex to search for; point value of that regex
 		if (forLoopRB.isPressed()) {
 			AITA.addRawSearchString("for\\s*\\(.*:.*\\)", Integer.parseInt(point3.getText()));
 		}
-		System.out.println("grading labs");
 		LinkedList<Result> hm = AITA.grade();
-		System.out.println("labs graded");
 		displayResults(hm);
 	}
 
@@ -176,7 +165,6 @@ public class AITAGUI extends Application {
 	}
 
 	public static void displayResults(List<Result> l) {
-		System.out.println("displaying results");
 		Stage resultStage = new Stage();
 		resultStage.setTitle("Results");
 
@@ -198,13 +186,11 @@ public class AITAGUI extends Application {
 
 		vb.getChildren().add(titles);
 
-		System.out.println("creating hboxes");
 		HBox[] hbox = new HBox[l.size()];
 		for(HBox h:hbox){
 			h = new HBox();
 			h.setSpacing(10);
 
-			System.out.println("generating Labels");
 			Result e = (Result)it.next();
 			Label path = new Label((String)e.getPath());
 			path.setMinWidth(480);
@@ -231,7 +217,6 @@ public class AITAGUI extends Application {
 	}
 
 	public static void displayDetails(Result r) throws FileNotFoundException {
-		System.out.println("displaying details");
 		Stage detailStage = new Stage();
 		detailStage.setTitle(r.getPath());
 
@@ -320,7 +305,12 @@ public class AITAGUI extends Application {
 
 
 class OptionList extends VBox{
+
+	Label title;
+
 	public OptionList(){
+		title = new Label("Things to check:");
+		getChildren().add(title);
 		add();
 	}
 
@@ -332,11 +322,12 @@ class OptionList extends VBox{
 		return getChildren().add(new Option(this));
 	}
 
-	public ArrayList<String> getArrayList(){
-		ArrayList<String> r = new ArrayList<>();
+	public ArrayList<SearchString> getArrayList(){
+		ArrayList<SearchString> r = new ArrayList<>();
 		for(Node n:getChildren()){
+			if(n instanceof Label || n instanceof HBox) continue;
 			if(!((Option)n).text.getText().equals("")){
-				r.add(((Option)n).text.getText());
+				r.add(new SearchString( ((Option)n).text.getText(),((Option)n).value.getText()));
 			}
 
 		}
@@ -346,10 +337,15 @@ class OptionList extends VBox{
 }
 
 class Option extends HBox{
+	TextField value;
 	TextField text;
+	ComboBox<String> presets;
+	ArrayList<String> presetRegex;
 	Button remove;
 	boolean fresh;
-	Parent parent;
+	OptionList parent;
+
+
 
 	public Option(OptionList p){
 		parent = p;
@@ -358,11 +354,15 @@ class Option extends HBox{
 		text.setOnKeyTyped(new EventHandler<KeyEvent>(){
 			@Override
 			public void handle(KeyEvent event) {
-				if(fresh){
-					fresh = false;
-					getChildren().add(remove);
-					p.add();
-				}
+				unfresh();
+			}
+		});
+		value = new TextField();
+		value.setMaxWidth(40);
+		value.setOnKeyTyped(new EventHandler<KeyEvent>(){
+			@Override
+			public void handle(KeyEvent event) {
+				unfresh();
 			}
 		});
 		remove = new Button();
@@ -374,7 +374,44 @@ class Option extends HBox{
 			}
 		});
 
-		getChildren().add(text);
+
+		presets = new ComboBox();
+		presetRegex = new ArrayList<>();
+
+		//default nothing
+		presets.getItems().add("");
+		presetRegex.add("");
+
+		//test 1
+		presets.getItems().add("test1");
+		presetRegex.add("regex for test 1");
+
+		//test 2
+		presets.getItems().add("test2");
+		presetRegex.add("regex for test 2");
+
+		//test 3
+		presets.getItems().add("test3");
+		presetRegex.add("regex for test 3");
+
+		presets.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event){
+				unfresh();
+				text.setText( presetRegex.get(presets.getItems().indexOf(presets.getValue())) );
+			}
+		});
+
+		getChildren().addAll(value, text, presets);
+	}
+
+	public void unfresh(){
+		if(fresh){
+			fresh = false;
+
+			getChildren().add(remove);
+			parent.add();
+		}
 	}
 
 	private Option self(){
@@ -382,4 +419,53 @@ class Option extends HBox{
 	}
 
 }
+
+class SearchString{
+	String regex;
+	int value;
+
+	public SearchString(String regex, String value){
+		this.regex = regex;
+		try
+		{
+			this.value = value.isEmpty() ? 0 : Integer.parseInt(value);
+		}
+		catch(NumberFormatException e){
+			this.value = 0;
+		}
+	}
+
+	public SearchString(String regex, int value){
+		this.regex = regex;
+		this.value = value;
+	}
+
+	public String getRegex(){
+		return regex;
+	}
+
+	public int getValue(){
+		return value;
+	}
+
+	public void setRegex(String regex){
+		this.regex = regex;
+	}
+
+	public void setValue(int value){
+		this.value = value;
+	}
+
+	public void setValue(String value){
+		try
+		{
+			this.value = value.isEmpty() ? 0 : Integer.parseInt(value);
+		}
+		catch(NumberFormatException e){
+			this.value = 0;
+		}
+	}
+
+}
+
 }
