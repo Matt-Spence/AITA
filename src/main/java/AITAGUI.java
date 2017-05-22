@@ -2,7 +2,6 @@
  * Created by Matth_000 on 2/14/2017.
  */
 
-import javafx.collections.ObservableList;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.*;
@@ -330,12 +329,12 @@ class OptionList extends VBox{
 		return getChildren().add(new Option(this));
 	}
 
-	public ArrayList<String> getArrayList(){
-		ArrayList<String> r = new ArrayList<>();
+	public ArrayList<SearchString> getArrayList(){
+		ArrayList<SearchString> r = new ArrayList<>();
 		for(Node n:getChildren()){
 			if(n instanceof Label || n instanceof HBox) continue;
 			if(!((Option)n).text.getText().equals("")){
-				r.add(((Option)n).text.getText());
+				r.add(new SearchString( ((Option)n).text.getText(),((Option)n).value.getText() );
 			}
 
 		}
@@ -345,7 +344,7 @@ class OptionList extends VBox{
 }
 
 class Option extends HBox{
-	TextField points;
+	TextField value;
 	TextField text;
 	ComboBox<String> presets;
 	ArrayList<String> presetRegex;
@@ -365,9 +364,9 @@ class Option extends HBox{
 				unfresh();
 			}
 		});
-		points = new TextField();
-		points.setMaxWidth(40);
-		points.setOnKeyTyped(new EventHandler<KeyEvent>(){
+		value = new TextField();
+		value.setMaxWidth(40);
+		value.setOnKeyTyped(new EventHandler<KeyEvent>(){
 			@Override
 			public void handle(KeyEvent event) {
 				unfresh();
@@ -410,7 +409,7 @@ class Option extends HBox{
 			}
 		});
 
-		getChildren().addAll(points, text, presets);
+		getChildren().addAll(value, text, presets);
 	}
 
 	public void unfresh(){
