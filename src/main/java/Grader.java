@@ -23,16 +23,9 @@ class Grader
 	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
 	{
 
-		StringBuilder sourceCodeBuild = new StringBuilder();
 		try
 		{
-
-			Scanner sourceReader = new Scanner(currentFile);
-			while (sourceReader.hasNextLine())
-			{
-				sourceCodeBuild.append(sourceReader.nextLine());
-				sourceCodeBuild.append("\n");
-			}
+			Normalizer.normalize(currentFile);
 		}
 		catch (FileNotFoundException e)
 		{
