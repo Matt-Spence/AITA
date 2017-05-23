@@ -142,14 +142,14 @@ public class AITAGUI extends Application {
 		AITA.setIgnoreWhiteSpace(whiteSpaceRB.isSelected());
 		AITA.setIgnoreSymbolCharacters(symbolRB.isSelected());
 		ArrayList<SearchString> options = optionList.getArrayList();
+		System.out.println(options);
 		HashMap<String, Integer> SearchStrings = new HashMap<>();
 		for(SearchString s:options){
 			SearchStrings.put(s.getRegex(),s.getValue());
 		}
+		System.out.println(SearchStrings);
 		AITA.setSearchStrings(SearchStrings);//hashmap of regex to search for; point value of that regex
-		if (forLoopRB.isPressed()) {
-			AITA.addRawSearchString("for\\s*\\(.*:.*\\)", Integer.parseInt(point3.getText()));
-		}
+
 		LinkedList<Result> hm = AITA.grade();
 		displayResults(hm);
 	}
@@ -307,10 +307,21 @@ public class AITAGUI extends Application {
 class OptionList extends VBox{
 
 	Label title;
+	HBox labels;
+
 
 	public OptionList(){
 		title = new Label("Things to check:");
-		getChildren().add(title);
+		title.setFont(Font.font(16));
+
+		labels = new HBox();
+		labels.setSpacing(10);
+		Label valueLabel = new Label("Value");
+		valueLabel.setMaxWidth(40);
+		Label regexLabel = new Label("Regex");
+
+		labels.getChildren().addAll(valueLabel, regexLabel);
+		getChildren().addAll(title, labels);
 		add();
 	}
 
@@ -325,7 +336,8 @@ class OptionList extends VBox{
 	public ArrayList<SearchString> getArrayList(){
 		ArrayList<SearchString> r = new ArrayList<>();
 		for(Node n:getChildren()){
-			if(n instanceof Label || n instanceof HBox) continue;
+			System.out.println(n);
+			if(!(n instanceof Option)) continue;
 			if(!((Option)n).text.getText().equals("")){
 				r.add(new SearchString( ((Option)n).text.getText(),((Option)n).value.getText()));
 			}
@@ -383,8 +395,8 @@ class Option extends HBox{
 		presetRegex.add("");
 
 		//test 1
-		presets.getItems().add("test1");
-		presetRegex.add("regex for test 1");
+		presets.getItems().add("for each");
+		presetRegex.add("for\\s*\\(.*:.*\\)");
 
 		//test 2
 		presets.getItems().add("test2");

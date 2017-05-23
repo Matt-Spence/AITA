@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 
 public class GradeBot
@@ -93,9 +94,15 @@ public class GradeBot
 	 */
 	public void setSearchStrings(HashMap<String, Integer> searchStrings)
 	{
+		System.err.println("setSearchString call");
+		System.out.println(searchStrings);
 		HashMap<String, Integer> realOnes = new HashMap<>();
-		searchStrings.forEach((String simpleIn, Integer y) ->
+		System.err.println("we made the hashmap");
+		for(Map.Entry<String, Integer> x: searchStrings.entrySet())
 		{
+			String simpleIn = x.getKey();
+			int y = x.getValue().intValue();
+			System.err.println("not lambda");
 			String regexed = simpleIn.replace("+", "\\+").replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)").replaceAll("\\*", ".*").replaceAll("#", "\\d+").replaceAll("\\|\\|", "|").replaceAll("_", "[\\\\s\\\\n\\\\r]*");
 			for (int i = 0; i < 10; i++)
 			{
@@ -104,7 +111,8 @@ public class GradeBot
 			}
 			regexed = regexed.replaceAll("VAR", "[a-zA-Z][a-z0-9]*");
 			realOnes.put(regexed, y);
-		});
+			System.err.println(regexed);
+		}
 
 		this.searchStrings = realOnes;
 	}

@@ -23,14 +23,8 @@ public class Normalizer {
         return str;
     }
 
-    public static String normalize(File f){
-        Scanner scan = null;
-        try {
-            scan = new Scanner(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return "";
-        }
+    public static String normalize(File f) throws FileNotFoundException{
+        Scanner scan = new Scanner(f);
         String str = "";
         while(scan.hasNextLine()){
             str += scan.nextLine()+"\n";
