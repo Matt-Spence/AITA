@@ -22,10 +22,10 @@ class Grader
 	 */
 	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
 	{
-
+		String sourceCode;
 		try
 		{
-			Normalizer.normalize(currentFile);
+			sourceCode = Normalizer.normalize(currentFile);
 		}
 		catch (FileNotFoundException e)
 		{
@@ -42,7 +42,7 @@ class Grader
 
 			Integer score = 100;
 
-			String sourceCode = sourceCodeBuild.toString();
+
 			String className = currentFile.getName().replaceFirst("[.][^.]+$", "");
 			Class<?> currentCodeToBeGraded;
 			Method mainMethod;
@@ -159,7 +159,7 @@ class Grader
 		{
 			log.error("{}", e.toString());
 			e.printStackTrace();
-			return new Result(currentFile.getAbsolutePath(), "Runtime error" , sourceCodeBuild.toString(), e.toString(), "No output" );
+			return new Result(currentFile.getAbsolutePath(), "Runtime error" , sourceCodeStr.toString(), e.toString(), "No output" );
 		}
 
 	}
