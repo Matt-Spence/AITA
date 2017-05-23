@@ -22,10 +22,18 @@ class Grader
 	 */
 	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
 	{
+
+		StringBuilder sourceCodeBuild = new StringBuilder();
 		String sourceCode;
 		try
 		{
 			sourceCode = Normalizer.normalize(currentFile);
+			Scanner sourceReader = new Scanner(currentFile);
+			while (sourceReader.hasNextLine())
+			{
+				sourceCodeBuild.append(sourceReader.nextLine());
+				sourceCodeBuild.append("\n");
+			}
 		}
 		catch (FileNotFoundException e)
 		{
@@ -62,7 +70,7 @@ class Grader
 			catch (Error error)
 			{
 				log.error("{}", error.toString());
-				return new Result(currentFile.getAbsolutePath(), "Compilation error", sourceCode, error.toString(),"No Output" );
+				return new Result(currentFile.getAbsolutePath(), "Compilation error", sourceCodeBuild.toString(), error.toString(),"No Output" );
 			}
 
 
@@ -147,19 +155,19 @@ class Grader
 
 			if (!modifiedResult.equals(expectedResult))
 			{
-				//System.err.printf("expected:%n%s%n%nactual:%n%s", expectedResult, actualResult);
-				return new Result(currentFile.getAbsolutePath(), "Incorrect Output" , sourceCode, "No error", actualResult );
+				System.err.printf("expected:%n%s%n%nactual:%n%s", expectedResult, actualResult);
+				return new Result(currentFile.getAbsolutePath(), "Incorrect Output" , sourceCodeBuild.toString(), "No error", actualResult );
 
 			} else
 			{
-				return new Result(currentFile.getAbsolutePath(), new Integer(score).toString() , sourceCode, "No error", actualResult );
+				return new Result(currentFile.getAbsolutePath(), new Integer(score).toString() , sourceCodeBuild.toString(), "No error", actualResult );
 			}
 
 		} catch (Exception e)
 		{
 			log.error("{}", e.toString());
 			e.printStackTrace();
-			return new Result(currentFile.getAbsolutePath(), "Runtime error" , sourceCode, e.toString(), "No output" );
+			return new Result(currentFile.getAbsolutePath(), "Runtime error" , sourceCodeBuild.toString(), e.toString(), "No output" );
 		}
 
 	}

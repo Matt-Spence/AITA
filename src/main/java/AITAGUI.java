@@ -22,6 +22,7 @@ import javafx.scene.image.*;
 
 
 public class AITAGUI extends Application {
+	private String helpText = "";
 	// List of files to be read in
 	private List<File> labs = new ArrayList<>(10);
 	private int fileCount = 0;
