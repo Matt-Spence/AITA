@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -237,6 +238,19 @@ class AFile extends MyFile{
 		});
 		pic.setImage((name.length()>=4 && name.substring(name.length()-4).equalsIgnoreCase("java"))?imgJava:imgFile);
 		//stuff.getChildren().addAll(btn,pic,text);
+
+		if(FileBrowser.fileList.contains(file)){
+			bool = true;
+			btn.setGraphic(check);
+			for(Node c:FileBrowser.selected.getChildren()){
+				if(((AFileClone)c).original.file.getAbsolutePath().equals(file.getAbsolutePath()))
+				{
+					clone = (AFileClone) c;
+					((AFileClone) c).original = this;
+				}
+			}
+		}
+
 	}
 	public void action(){
 		bool = !bool;
