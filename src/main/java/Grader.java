@@ -159,7 +159,7 @@ class Grader
 		{
 			log.error("{}", e.toString());
 			e.printStackTrace();
-			return new Result(currentFile.getAbsolutePath(), "Runtime error" , sourceCodeStr.toString(), e.toString(), "No output" );
+			return new Result(currentFile.getAbsolutePath(), "Runtime error" , sourceCode, e.toString(), "No output" );
 		}
 
 	}
