@@ -38,13 +38,13 @@ public class FileBrowser extends HBox{
 		fileList = new ArrayList<File>();
 
 		VBox vbRoot = new VBox();
-		vbRoot.setMinWidth(150);
-		vbRoot.setMaxWidth(150);
+		vbRoot.setMinWidth(300);
+		vbRoot.setMaxWidth(300);
 
 		VBox vb1 = new VBox();
 		ScrollPane sp = new ScrollPane();
-		sp.setMinWidth(200);
-		sp.setMaxWidth(200);
+		sp.setMinWidth(400);
+		sp.setMaxWidth(400);
 		sp.setContent(vb1);
 		sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -65,7 +65,9 @@ public class FileBrowser extends HBox{
 		fol1.realbtn.setMaxWidth(fol1.text.getLayoutBounds().getWidth()+64+10);
 		vb1.getChildren().add(fol1);
 
-		Button btn = new Button("Submit");
+		Button btn = new Button("Grade Files");
+		btn.setMinWidth(300);
+		btn.setMinHeight(40);
 		btn.setDefaultButton(true);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override

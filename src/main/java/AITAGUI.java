@@ -7,6 +7,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.*;
 
 import java.io.File;
+
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 
 import java.io.FileNotFoundException;
@@ -16,6 +18,8 @@ import javafx.application.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.*;
 import javafx.scene.text.*;
 import javafx.scene.image.*;
@@ -87,16 +91,12 @@ public class AITAGUI extends Application {
 		// add buttons
 		HBox button1Box = new HBox();
 		HBox button2Box = new HBox();
-		HBox button3Box = new HBox();
 
 		button1Box.getChildren().addAll(whiteSpaceRB);
 		button2Box.getChildren().addAll(symbolRB);
-		button3Box.getChildren().addAll(forLoopRB);
 		point3.setMaxWidth(50.0);
-		button3Box.getChildren().add(point3);
 		vb.getChildren().add(button1Box);
 		vb.getChildren().add(button2Box);
-		vb.getChildren().add(button3Box);
 
 		outputField.getChildren().addAll(expectedOutput, outText);
 		inputField.getChildren().addAll(inputData, inText);
@@ -110,21 +110,34 @@ public class AITAGUI extends Application {
 
 		BorderPane bp = new BorderPane();
 		bp.setCenter(hb);
+		bp.setStyle("-fx-background-color:#aaccff;");
 
+		hb.setSpacing(25);
+		hb.setAlignment(Pos.CENTER);
 
 		vb.setPadding(new Insets(25, 25, 25, 25));
 		vb.setSpacing(5);
 
-		Label TopBanner = new Label("Hello Ms. Campbell!");
-		Label BottomBanner = new Label(getEasterEgg());
-
+		Label topBanner = new Label("Hello Ms. Campbell!");
+		topBanner.setFont(Font.font(32));
+		topBanner.setStyle("-fx-text-fill:#000000;");
 		HBox top = new HBox();
 		top.setAlignment(Pos.CENTER);
-		top.getChildren().add(TopBanner);
+		top.getChildren().add(topBanner);
+		top.setMinHeight(50);
+		top.setStyle("-fx-border-width:2px;-fx-border-style: solid;-fx-background-color:#4466cc;");
+
+
+		Label bottomBanner = new Label(getEasterEgg());
+		bottomBanner.setFont(Font.font(32));
+		bottomBanner.setStyle("-fx-text-fill:#000000;");
 
 		HBox bottom = new HBox();
 		bottom.setAlignment(Pos.CENTER);
-		bottom.getChildren().add(BottomBanner);
+		bottom.getChildren().add(bottomBanner);
+		bottom.setMinHeight(50);
+		bottom.setStyle("-fx-border-width:2px;-fx-border-style: solid;-fx-background-color:#4466cc;");
+
 
 		bp.setTop(top);
 		bp.setBottom(bottom);
@@ -357,8 +370,8 @@ class Option extends HBox{
 	Button remove;
 	boolean fresh;
 	OptionList parent;
-
-
+	String lastValue;
+	boolean replaceValue;
 
 	public Option(OptionList p){
 		parent = p;
@@ -370,14 +383,36 @@ class Option extends HBox{
 				unfresh();
 			}
 		});
-		value = new TextField();
+		replaceValue = false;
+		lastValue = "0";
+		value = new TextField("0");
 		value.setMaxWidth(40);
 		value.setOnKeyTyped(new EventHandler<KeyEvent>(){
 			@Override
 			public void handle(KeyEvent event) {
 				unfresh();
+				//System.out.println(value.getText()+"::"+event.getCharacter());
+				if(event.getCharacter().matches("\\D")){
+					lastValue = value.getText();
+					replaceValue = true;
+				}
+
 			}
 		});
+		value.setOnKeyReleased(new EventHandler<KeyEvent>(){
+			@Override
+			public void handle(KeyEvent event) {
+				unfresh();
+				if(replaceValue || value.getText().length() > 2){
+					replaceValue = false;
+					value.setText(lastValue);
+				}
+				else{
+					lastValue = value.getText();
+				}
+			}
+		});
+
 		remove = new Button();
 		remove.setGraphic(new ImageView(new Image(this.getClass().getResource("close.png").toString(), 16, 16, true, false)));
 		remove.setOnAction(new EventHandler<ActionEvent>(){
