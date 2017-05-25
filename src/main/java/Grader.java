@@ -157,9 +157,9 @@ class Grader
 				StringBuilder missed = new StringBuilder();
 				missedRegex.forEach((x) -> {
 				    missed.append(-x.getValue());
-				    missed.append(", missing ");
+				    missed.append(", missing \"");
 					missed.append(x.getOrig());
-					missed.append('\n');
+					missed.append("\"\n");
 				});
 				if (!modifiedResult.equals(expectedResult)) {
 					System.err.printf("expected:%n%s%n%nactual:%n%s", expectedResult, actualResult);
