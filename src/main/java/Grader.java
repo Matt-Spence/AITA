@@ -23,7 +23,7 @@ class Grader
 	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, List<searchString> searchStrings)
 	{
 		
-		List<String> missedRegex = new LinkedList<>();
+		List<searchString> missedRegex = new LinkedList<>();
 		
 		StringBuilder sourceCodeBuild = new StringBuilder();
 		String sourceCode;
@@ -149,14 +149,16 @@ class Grader
 				String pattern = "^[\\W\\w]*" + x.getRegex() + "[\\W\\w]*$";
 				Integer value = x.getValue();
 				if (!sourceCode.matches(pattern)) {
-					missedRegex.add(x.getOrig());
+					missedRegex.add(x);
 					score -= value;
 				}
 			}
 			if (missedRegex.size() > 0) {
 				StringBuilder missed = new StringBuilder();
 				missedRegex.forEach((x) -> {
-					missed.append(x);
+				    missed.append(-x.getValue());
+				    missed.append(", missing ");
+					missed.append(x.getOrig());
 					missed.append('\n');
 				});
 				if (!modifiedResult.equals(expectedResult)) {
