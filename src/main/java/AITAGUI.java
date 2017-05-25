@@ -7,6 +7,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.*;
 
 import java.io.File;
+
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 
 import java.io.FileNotFoundException;
@@ -16,6 +18,8 @@ import javafx.application.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.*;
 import javafx.scene.text.*;
 import javafx.scene.image.*;
@@ -30,7 +34,8 @@ public class AITAGUI extends Application {
 	private static File inputFile;
 	RadioButton whiteSpaceRB = new RadioButton("Ignore White Space");
 	RadioButton symbolRB = new RadioButton("Ignore Symbols");
-	RadioButton forLoopRB = new RadioButton("Check for each loops");
+
+
 	TextField point3 = new TextField();
 	ScrollPane searchStringScrollPane = new ScrollPane();
 	OptionList optionList = new OptionList();
@@ -49,8 +54,12 @@ public class AITAGUI extends Application {
 
 		// create buttons
 		Button inputData = new Button("Get Data File");
-		Button expectedOutput = new Button("Expected Output");
+		inputData.setFont(Font.font("monospace", 16));
+		inputData.setStyle("-fx-text-fill:#00ff00;-fx-background-color:#008800;-fx-background-radius:0px;");
 
+		Button expectedOutput = new Button("Expected Output");
+		expectedOutput.setFont(Font.font("monospace", 16));
+		expectedOutput.setStyle("-fx-text-fill:#00ff00;-fx-background-color:#008800;-fx-background-radius:0px;");
 		//create text field
 
 		FileChooser fileChooser = new FileChooser();
@@ -87,16 +96,19 @@ public class AITAGUI extends Application {
 		// add buttons
 		HBox button1Box = new HBox();
 		HBox button2Box = new HBox();
-		HBox button3Box = new HBox();
 
+
+		whiteSpaceRB.setStyle("-fx-text-fill:#ffffff;");
+		whiteSpaceRB.setFont(Font.font("monospace", 16));
 		button1Box.getChildren().addAll(whiteSpaceRB);
+
+		symbolRB.setStyle("-fx-text-fill:#ffffff;");
+		symbolRB.setFont(Font.font("monospace", 16));
 		button2Box.getChildren().addAll(symbolRB);
-		button3Box.getChildren().addAll(forLoopRB);
+
 		point3.setMaxWidth(50.0);
-		button3Box.getChildren().add(point3);
 		vb.getChildren().add(button1Box);
 		vb.getChildren().add(button2Box);
-		vb.getChildren().add(button3Box);
 
 		outputField.getChildren().addAll(expectedOutput, outText);
 		inputField.getChildren().addAll(inputData, inText);
@@ -110,24 +122,44 @@ public class AITAGUI extends Application {
 
 		BorderPane bp = new BorderPane();
 		bp.setCenter(hb);
+		bp.setStyle("-fx-background-color:#000000;");
 
+		hb.setSpacing(25);
+		hb.setAlignment(Pos.CENTER);
 
 		vb.setPadding(new Insets(25, 25, 25, 25));
 		vb.setSpacing(5);
 
-		Label TopBanner = new Label("Hello Ms. Campbell!");
-		Label BottomBanner = new Label(getEasterEgg());
+		Label topBanner = new Label("Hello Ms. Campbell!");
+		topBanner.setFont(Font.font("monospace", 32));
+		topBanner.setStyle("-fx-text-fill:#00ff00;");
+		HBox toph = new HBox();
+		toph.setAlignment(Pos.CENTER);
+		toph.getChildren().add(topBanner);
+		toph.setMinHeight(50);
+		toph.setStyle("-fx-border-width:2px;-fx-border-style: solid;-fx-border-color:#00ff00;-fx-background-color:#008800;");
 
-		HBox top = new HBox();
-		top.setAlignment(Pos.CENTER);
-		top.getChildren().add(TopBanner);
+		VBox top = new VBox();
+		top.getChildren().add(toph);
+		top.setPadding(new Insets(0,0,20,0));
 
-		HBox bottom = new HBox();
-		bottom.setAlignment(Pos.CENTER);
-		bottom.getChildren().add(BottomBanner);
+		Label bottomBanner = new Label(getEasterEgg());
+		bottomBanner.setFont(Font.font("monospace", 32));
+		bottomBanner.setStyle("-fx-text-fill:#00ff00;");
+		HBox bottomh = new HBox();
+		bottomh.setAlignment(Pos.CENTER);
+		bottomh.getChildren().add(bottomBanner);
+		bottomh.setMinHeight(50);
+		bottomh.setStyle("-fx-border-width:2px;-fx-border-style: solid;-fx-border-color:#00ff00;-fx-background-color:#008800;");
+
+		VBox bottom = new VBox();
+		bottom.getChildren().add(bottomh);
+		bottom.setPadding(new Insets(20,0,0,0));
+
 
 		bp.setTop(top);
 		bp.setBottom(bottom);
+
 
 		primaryStage.setScene(new Scene(bp));
 		primaryStage.setMaximized(true);
@@ -309,34 +341,53 @@ class OptionList extends VBox{
 
 	Label title;
 	HBox labels;
-
+	VBox options;
+	ScrollPane optionsSP;
 
 	public OptionList(){
+		setMinWidth(390);
+
 		title = new Label("Things to check:");
-		title.setFont(Font.font(16));
+		title.setFont(Font.font("monospace", 20));
+		title.setStyle("-fx-text-fill:#ffffff;");
 
 		labels = new HBox();
 		labels.setSpacing(10);
 		Label valueLabel = new Label("Value");
-		valueLabel.setMaxWidth(40);
+		valueLabel.setFont(Font.font("monospace"));
+		valueLabel.setMaxWidth(50);
+		valueLabel.setStyle("-fx-text-fill:#ffffff;");
 		Label regexLabel = new Label("Regex");
+		regexLabel.setFont(Font.font("monospace"));
+		regexLabel.setStyle("-fx-text-fill:#ffffff;");
 
 		labels.getChildren().addAll(valueLabel, regexLabel);
-		getChildren().addAll(title, labels);
+
+		options = new VBox();
+		options.setSpacing(2);
+		optionsSP = new ScrollPane();
+		optionsSP.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		optionsSP.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		//optionsSP.setBackground(Background.EMPTY);
+		optionsSP.setStyle("-fx-background:#000000;-fx-border-color:#000000;");
+		optionsSP.setContent(options);
+		getChildren().addAll(title, labels, optionsSP);
+		setSpacing(5);
+
 		add();
 	}
 
 	public boolean remove(Option o){
-		return getChildren().remove(o);
+		return options.getChildren().remove(o);
 	}
 
 	public boolean add(){
-		return getChildren().add(new Option(this));
+		return options.getChildren().add(new Option(this));
 	}
 
 	public ArrayList<SearchString> getArrayList(){
 		ArrayList<SearchString> r = new ArrayList<>();
-		for(Node n:getChildren()){
+		for(Node n:options.getChildren()){
 			System.out.println(n);
 			if(!(n instanceof Option)) continue;
 			if(!((Option)n).text.getText().equals("")){
@@ -357,28 +408,57 @@ class Option extends HBox{
 	Button remove;
 	boolean fresh;
 	OptionList parent;
-
-
+	String lastValue;
+	boolean replaceValue;
 
 	public Option(OptionList p){
 		parent = p;
 		fresh = true;
 		text = new TextField();
+		text.setFont(Font.font("monospace"));
+		text.setMinWidth(200);
+		text.setStyle("-fx-background-color:#000000;-fx-text-fill:#ffffff;-fx-border-color:#ffffff;-fx-border-style: hidden hidden solid hidden;");
 		text.setOnKeyTyped(new EventHandler<KeyEvent>(){
 			@Override
 			public void handle(KeyEvent event) {
 				unfresh();
 			}
 		});
-		value = new TextField();
+
+		replaceValue = false;
+		lastValue = "0";
+		value = new TextField("0");
+		value.setFont(Font.font("monospace"));
 		value.setMaxWidth(40);
+		value.setStyle("-fx-background-color:#000000;-fx-text-fill:#ffffff;-fx-border-color:#ffffff;-fx-border-style: hidden hidden solid hidden;");
 		value.setOnKeyTyped(new EventHandler<KeyEvent>(){
 			@Override
 			public void handle(KeyEvent event) {
 				unfresh();
+				//System.out.println(value.getText()+"::"+event.getCharacter());
+				if(event.getCharacter().matches("\\D")){
+					lastValue = value.getText();
+					replaceValue = true;
+				}
+
 			}
 		});
+		value.setOnKeyReleased(new EventHandler<KeyEvent>(){
+			@Override
+			public void handle(KeyEvent event) {
+				unfresh();
+				if(replaceValue || value.getText().length() > 2){
+					replaceValue = false;
+					value.setText(lastValue);
+				}
+				else{
+					lastValue = value.getText();
+				}
+			}
+		});
+
 		remove = new Button();
+		remove.setStyle("-fx-text-fill:#00ff00;-fx-background-color:#008800;-fx-background-radius:0px;");
 		remove.setGraphic(new ImageView(new Image(this.getClass().getResource("close.png").toString(), 16, 16, true, false)));
 		remove.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
@@ -415,6 +495,7 @@ class Option extends HBox{
 			}
 		});
 
+		setSpacing(5);
 		getChildren().addAll(value, text, presets);
 	}
 

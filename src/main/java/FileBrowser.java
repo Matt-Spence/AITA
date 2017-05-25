@@ -17,6 +17,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -38,17 +39,19 @@ public class FileBrowser extends HBox{
 		fileList = new ArrayList<File>();
 
 		VBox vbRoot = new VBox();
-		vbRoot.setMinWidth(150);
-		vbRoot.setMaxWidth(150);
+		vbRoot.setMinWidth(300);
+		vbRoot.setMaxWidth(300);
 
 		VBox vb1 = new VBox();
+		vb1.setStyle("-fx-background-color: transparent");
 		ScrollPane sp = new ScrollPane();
-		sp.setMinWidth(200);
-		sp.setMaxWidth(200);
+		sp.setMinWidth(400);
+		sp.setMaxWidth(400);
 		sp.setContent(vb1);
 		sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-		sp.setBackground(Background.EMPTY);
+		sp.setStyle("-fx-background:empty;");//sp.setBackground(Background.EMPTY);
+
 
 		MyFile fol1 = root.isDirectory()?new Folder(root):new AFile(root);
 		if (System.getProperty("os.name").contains("Windows"))
@@ -65,7 +68,11 @@ public class FileBrowser extends HBox{
 		fol1.realbtn.setMaxWidth(fol1.text.getLayoutBounds().getWidth()+64+10);
 		vb1.getChildren().add(fol1);
 
-		Button btn = new Button("Submit");
+		Button btn = new Button("Grade Files");
+		btn.setFont(Font.font("monospace", 24));
+		btn.setStyle("-fx-text-fill:#00ff00;-fx-background-color:#008800;-fx-background-radius:0px;");
+		btn.setMinWidth(300);
+		btn.setMinHeight(40);
 		btn.setDefaultButton(true);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
@@ -73,9 +80,17 @@ public class FileBrowser extends HBox{
 				ag.submit(fileList);
 			}
 		});
+
 		selected = new VBox();
+		ScrollPane selectedSP = new ScrollPane();
+		selectedSP.setContent(selected);
+		selectedSP.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		selectedSP.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		selectedSP.setStyle("-fx-background:empty;");
+
 		this.getChildren().addAll(vbRoot,sp);
-		vbRoot.getChildren().addAll(btn,selected);
+		this.setSpacing(20);
+		vbRoot.getChildren().addAll(btn,selectedSP);
 
 	}
 
@@ -106,6 +121,7 @@ class MyFile extends VBox{
 
 		text = new Text(name);
 		text.setFont(new Font("monospace", 16));
+		text.setFill(Color.valueOf("#ffffff"));
 		btn = new Button();
 		btn.setBackground(Background.EMPTY);
 		btn.setMaxSize(24, 24);
@@ -296,6 +312,7 @@ class AFileClone extends StackPane{
 			text = new Text(o.name);
 		}
 		text.setFont(new Font("monospace", 16));
+		text.setFill(Color.valueOf("#ffffff"));
 
 		realbtn = new Button();
 		realbtn.setMinHeight(32);
