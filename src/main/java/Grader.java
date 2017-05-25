@@ -20,9 +20,11 @@ class Grader
 	 * @param ignoreSymbolCharacters if true it will ignore all non-alphanumeric, if false it won't
 	 * @param searchStrings every regex string to compare against as a key, and it's score value
 	 */
-	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, HashMap<String, Integer> searchStrings)
+	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, List<searchString> searchStrings)
 	{
-
+		
+		List<String> missedRegex = new LinkedList<>();
+		
 		StringBuilder sourceCodeBuild = new StringBuilder();
 		String sourceCode;
 		try
@@ -143,24 +145,36 @@ class Grader
 				expectedResult = expectedSymbolStripper.toString();
 			}
 
-			for (Map.Entry<String, Integer> x : searchStrings.entrySet())
-			{
-				String pattern = "^[\\W\\w]*" + x.getKey() + "[\\W\\w]*$";
+			for (searchString x : searchStrings) {
+				String pattern = "^[\\W\\w]*" + x.getRegex() + "[\\W\\w]*$";
 				Integer value = x.getValue();
-				if (!sourceCode.matches(pattern))
-				{
+				if (!sourceCode.matches(pattern)) {
+					missedRegex.add(x.getOrig());
 					score -= value;
 				}
 			}
+			if (missedRegex.size() > 0) {
+				StringBuilder missed = new StringBuilder();
+				missedRegex.forEach((x) -> {
+					missed.append(x);
+					missed.append('\n');
+				});
+				if (!modifiedResult.equals(expectedResult)) {
+					System.err.printf("expected:%n%s%n%nactual:%n%s", expectedResult, actualResult);
+					return new Result(currentFile.getAbsolutePath(), "Incorrect Output", sourceCodeBuild.toString(), missed.toString(), actualResult);
 
-			if (!modifiedResult.equals(expectedResult))
-			{
-				System.err.printf("expected:%n%s%n%nactual:%n%s", expectedResult, actualResult);
-				return new Result(currentFile.getAbsolutePath(), "Incorrect Output" , sourceCodeBuild.toString(), "No error", actualResult );
+				} else {
+					return new Result(currentFile.getAbsolutePath(), new Integer(score).toString(), sourceCodeBuild.toString(), missed.toString(), actualResult);
+				}
+			}
+			else {
+				if (!modifiedResult.equals(expectedResult)) {
+					System.err.printf("expected:%n%s%n%nactual:%n%s", expectedResult, actualResult);
+					return new Result(currentFile.getAbsolutePath(), "Incorrect Output", sourceCodeBuild.toString(), "No error, no missed", actualResult);
 
-			} else
-			{
-				return new Result(currentFile.getAbsolutePath(), new Integer(score).toString() , sourceCodeBuild.toString(), "No error", actualResult );
+				} else {
+					return new Result(currentFile.getAbsolutePath(), new Integer(score).toString(), sourceCodeBuild.toString(), "No error, no missed", actualResult);
+				}
 			}
 
 		} catch (Exception e)

@@ -1,9 +1,9 @@
+import kotlin.Function;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 
 public class GradeBot
@@ -16,7 +16,7 @@ public class GradeBot
 	private File correctOutputFile;
 	private boolean ignoreWhiteSpace;
 	private boolean ignoreSymbolCharacters;
-	private HashMap<String, Integer> searchStrings;
+	private List<searchString> searchStrings;
 	private PrintStream logOut;
 	private GradeBot()
 	{
@@ -94,25 +94,19 @@ public class GradeBot
 	 */
 	public void setSearchStrings(HashMap<String, Integer> searchStrings)
 	{
-		System.err.println("setSearchString call");
-		System.out.println(searchStrings);
-		HashMap<String, Integer> realOnes = new HashMap<>();
-		System.err.println("we made the hashmap");
-		for(Map.Entry<String, Integer> x: searchStrings.entrySet())
+		List<searchString> realOnes = new ArrayList<>();
+		searchStrings.forEach((orig, x) ->
 		{
-			String simpleIn = x.getKey();
-			int y = x.getValue().intValue();
-			System.err.println("not lambda");
-			String regexed = simpleIn.replace("+", "\\+").replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)").replaceAll("\\*", ".*").replaceAll("#", "\\d+").replaceAll("\\|\\|", "|").replaceAll("_", "[\\\\s\\\\n\\\\r]*");
+
+			String regexed = orig.replace("+", "\\+").replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)").replaceAll("\\*", ".*").replaceAll("#", "\\d+").replaceAll("\\|\\|", "|").replaceAll("_", "[\\\\s\\\\n\\\\r]*");
 			for (int i = 0; i < 10; i++)
 			{
 				regexed = regexed.replaceFirst("VAR" + i, "(VAR)");
 				regexed = regexed.replaceAll("VAR" + i, "\\\\" + i);
 			}
 			regexed = regexed.replaceAll("VAR", "[a-zA-Z][a-z0-9]*");
-			realOnes.put(regexed, y);
-			System.err.println(regexed);
-		}
+			realOnes.add(new searchString(regexed, orig, x));
+		});
 
 		this.searchStrings = realOnes;
 	}
@@ -122,7 +116,7 @@ public class GradeBot
 	 */
 	public void addRawSearchString(String regex, int value)
 	{
-		this.searchStrings.put(regex, value);
+		this.searchStrings.add(new searchString(regex, regex, value));
 	}
 
 
