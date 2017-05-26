@@ -161,7 +161,9 @@ public class AITAGUI extends Application {
 		bp.setBottom(bottom);
 
 
-		primaryStage.setScene(new Scene(bp));
+		Scene scene = new Scene(bp);
+		scene.getStylesheets().add("style.css");
+		primaryStage.setScene(scene);
 		primaryStage.setMaximized(true);
 		primaryStage.show();
 
@@ -469,6 +471,8 @@ class Option extends HBox{
 
 
 		presets = new ComboBox();
+
+		//presets.setStyle("-fx-text-fill:#00ff00;-fx-background-color:#008800;-fx-background-radius:0px;");
 		presetRegex = new ArrayList<>();
 
 		//default nothing
