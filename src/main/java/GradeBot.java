@@ -104,7 +104,7 @@ public class GradeBot
 				regexed = regexed.replaceFirst("VAR" + i, "(VAR)");
 				regexed = regexed.replaceAll("VAR" + i, "\\\\" + i);
 			}
-			regexed = regexed.replaceAll("VAR", "[a-zA-Z][a-z0-9]*");
+			regexed = regexed.replaceAll("VAR", "[a-zA-Z][a-zA-Z0-9]*");
 			realOnes.add(new searchString(regexed, orig, x));
 		});
 

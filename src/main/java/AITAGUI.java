@@ -2,6 +2,8 @@
  * Created by Matth_000 on 2/14/2017.
  */
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.*;
@@ -73,6 +75,8 @@ public class AITAGUI extends Application {
 				inText.setText(file.getName());
 			}
 		});
+		inText.setFont(Font.font("monospace", 16));
+		inText.setFill(new Color(1,1,1,1));
 
 		// select file representing expected output
 		expectedOutput.setOnAction((final ActionEvent e) -> {
@@ -82,6 +86,9 @@ public class AITAGUI extends Application {
 				outText.setText(file.getName());
 			}
 		});
+		outText.setFont(Font.font("monospace", 16));
+		outText.setFill(new Color(1,1,1,1));
+
 
 		// Create and build GUI
 		HBox hb = new HBox();
@@ -107,18 +114,45 @@ public class AITAGUI extends Application {
 		button2Box.getChildren().addAll(symbolRB);
 
 		point3.setMaxWidth(50.0);
-		vb.getChildren().add(button1Box);
-		vb.getChildren().add(button2Box);
+		VBox buttonVB = new VBox();
+		buttonVB.setSpacing(5);
+		buttonVB.getChildren().addAll(button1Box, button2Box);
+
+		inputField.getChildren().addAll(inputData, inText);
+		inputField.setSpacing(10);
+		inputField.setAlignment(Pos.CENTER_LEFT);
 
 		outputField.getChildren().addAll(expectedOutput, outText);
-		inputField.getChildren().addAll(inputData, inText);
+		outputField.setSpacing(10);
+		outputField.setAlignment(Pos.CENTER_LEFT);
 
-		inputField.setSpacing(5);
-		outputField.setSpacing(5);
+		VBox InOutVB = new VBox();
+		InOutVB.setSpacing(5);
+		InOutVB.getChildren().addAll(inputField, outputField);
 
-		vb.getChildren().add(inputField);
-		vb.getChildren().add(outputField);
+		VBox regexVB = new VBox();
+		regexVB.setAlignment(Pos.CENTER);
+		Label regexTitle = new Label("Regex Cheat Sheet");
+		regexTitle.setMinWidth(400);
+		regexTitle.setPadding(new Insets(10,10,0,10));
+		regexTitle.setFont(Font.font("monospace", 20));
+		regexTitle.setStyle("-fx-border-color: #ffffff;-fx-border-style: solid solid hidden solid;-fx-text-fill: #ffffff");
+		Label regexInfo = new Label(""+
+				"\n"+"*    wildcard"+
+				"\n"+"#    integer"+
+				"\n"+"_    whitespace"+
+				"\n"+"||   or"+
+				"\n"+"VAR  any variable"+
+				"\n"+"VAR# a specific variable ex: VAR0, VAR9"+
+				"");
+		regexInfo.setMinWidth(400);
+		regexInfo.setPadding(new Insets(0,10,10,10));
+		regexInfo.setStyle("-fx-border-color: #ffffff;-fx-border-style: hidden solid solid solid;-fx-text-fill: #ffffff");
+		regexInfo.setFont(Font.font("monospace", 16));
+		regexVB.getChildren().addAll(regexTitle, regexInfo);
 
+		vb.getChildren().addAll(buttonVB, InOutVB, regexVB);
+		vb.setSpacing(25);
 
 		BorderPane bp = new BorderPane();
 		bp.setCenter(hb);
@@ -128,7 +162,7 @@ public class AITAGUI extends Application {
 		hb.setAlignment(Pos.CENTER);
 
 		vb.setPadding(new Insets(25, 25, 25, 25));
-		vb.setSpacing(5);
+
 
 		Label topBanner = new Label("Hello Ms. Campbell!");
 		topBanner.setFont(Font.font("monospace", 32));
@@ -410,15 +444,14 @@ class Option extends HBox{
 	Button remove;
 	boolean fresh;
 	OptionList parent;
-	String lastValue;
-	boolean replaceValue;
+
 
 	public Option(OptionList p){
 		parent = p;
 		fresh = true;
 		text = new TextField();
 		text.setFont(Font.font("monospace"));
-		text.setMinWidth(200);
+		text.setMinWidth(300);
 		text.setStyle("-fx-background-color:#000000;-fx-text-fill:#ffffff;-fx-border-color:#ffffff;-fx-border-style: hidden hidden solid hidden;");
 		text.setOnKeyTyped(new EventHandler<KeyEvent>(){
 			@Override
@@ -427,34 +460,33 @@ class Option extends HBox{
 			}
 		});
 
-		replaceValue = false;
-		lastValue = "0";
-		value = new TextField("0");
+
+		value = new TextField("00");
 		value.setFont(Font.font("monospace"));
 		value.setMaxWidth(40);
 		value.setStyle("-fx-background-color:#000000;-fx-text-fill:#ffffff;-fx-border-color:#ffffff;-fx-border-style: hidden hidden solid hidden;");
-		value.setOnKeyTyped(new EventHandler<KeyEvent>(){
-			@Override
-			public void handle(KeyEvent event) {
-				unfresh();
-				//System.out.println(value.getText()+"::"+event.getCharacter());
-				if(event.getCharacter().matches("\\D")){
-					lastValue = value.getText();
-					replaceValue = true;
-				}
 
-			}
-		});
-		value.setOnKeyReleased(new EventHandler<KeyEvent>(){
+		value.focusedProperty().addListener(new ChangeListener<Boolean>()
+		{
 			@Override
-			public void handle(KeyEvent event) {
-				unfresh();
-				if(replaceValue || value.getText().length() > 2){
-					replaceValue = false;
-					value.setText(lastValue);
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue)
+			{
+				if(newValue){
+					//System.out.println("Gained focus");
 				}
-				else{
-					lastValue = value.getText();
+				if(!newValue){
+					//System.out.println("Lost focus");
+					String str = value.getText();
+					if(!str.matches("^\\d+$"))
+					{
+						value.setText("00");
+					}
+					else{
+						int num = Integer.parseInt(str);
+						if(num < 10) value.setText("0"+num);
+						else if(num > 99) value.setText("99");
+						else value.setText(""+num);
+					}
 				}
 			}
 		});
@@ -479,17 +511,27 @@ class Option extends HBox{
 		presets.getItems().add("");
 		presetRegex.add("");
 
-		//test 1
+		//for loop
+		presets.getItems().add("for loop");
+		presetRegex.add("for_(*;*;*)");//presetRegex.add("for\\s*\\(.*;.*;.*\\)");
+
+		//for each loop
 		presets.getItems().add("for each");
 		presetRegex.add("for\\s*\\(.*:.*\\)");
 
-		//test 2
-		presets.getItems().add("test2");
-		presetRegex.add("regex for test 2");
+		//while loop
+		presets.getItems().add("while");
+		presetRegex.add("while_(*)");
 
-		//test 3
-		presets.getItems().add("test3");
-		presetRegex.add("regex for test 3");
+
+		//switch statement
+		presets.getItems().add("switch");
+		presetRegex.add("switch_(VAR)_{*case_*:*}");
+
+		//printf
+		presets.getItems().add("printf");
+		presetRegex.add("out.printf_(*)_;");
+
 
 		presets.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
