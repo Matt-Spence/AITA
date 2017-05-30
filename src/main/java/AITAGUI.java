@@ -526,7 +526,7 @@ class Option extends HBox{
 
 		//switch statement
 		presets.getItems().add("switch");
-		presetRegex.add("switch_(VAR)_{*case_*:*}");
+		presetRegex.add("switch_(VAR)_{*case*:*}");
 
 		//printf
 		presets.getItems().add("printf");
