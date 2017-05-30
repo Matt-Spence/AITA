@@ -14,6 +14,8 @@ import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javafx.application.*;
@@ -363,7 +365,48 @@ public class AITAGUI extends Application {
 
 
 	public static String getEasterEgg() {
-		return "Let's grade some labs!";
+		int rand = (int)(Math.random()*50);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+
+		if(dateFormat.format(date).substring(6,11).equals("07/29")){
+			return "Happy Birthday Ms. Campbell! Courtesy of your favorite Snow Flakes";
+		}
+		if(dateFormat.format(date).substring(6,11).equals("10/09")){
+			return "Wish Johnny and Michael a happy birthday!";
+		}
+		if(dateFormat.format(date).substring(6,8).equals("12")){
+			return "Merry Christmas!";
+		}
+		if(dateFormat.format(date).substring(6,8).equals("09")){
+			return "Welcome back!";
+		}
+		if(dateFormat.format(date).substring(6,9).equals("11/")){
+			return "Happy Thanksgiving!";
+		}
+		if(rand>35){
+			return "Let's grade some labs!";
+		}
+		else if(rand>30 && rand <35){
+			return "I'm so glad Johnny, Dom, and Matt invented me!";
+		}
+		else if(rand < 35 && rand > 25){
+			return "I miss the Snow Flakes";
+		}
+		else if(rand == 35){
+			return "How's the UIL team doing? Probably not as good as Johnny, Dom, Matt, and Michael!";
+		}
+		else if(rand <=25 && rand >15){
+			return "Let there be prgrms!";
+		}
+		else if(rand <=15&& rand >10){
+			return "To do: come up with clever easter egg";
+		}
+		else return "Hi Ms. Campbell!";
+
+
+
+
 	}
 
 	private void storeFile(File file) {
