@@ -1,5 +1,3 @@
-import kotlin.Function;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,7 +14,7 @@ public class GradeBot
 	private File correctOutputFile;
 	private boolean ignoreWhiteSpace;
 	private boolean ignoreSymbolCharacters;
-	private List<searchString> searchStrings;
+	private List<SearchString> searchStrings;
 	private PrintStream logOut;
 	private GradeBot()
 	{
@@ -94,7 +92,7 @@ public class GradeBot
 	 */
 	public void setSearchStrings(HashMap<String, Integer> searchStrings)
 	{
-		List<searchString> realOnes = new ArrayList<>();
+		List<SearchString> realOnes = new ArrayList<>();
 		searchStrings.forEach((orig, x) ->
 		{
 
@@ -105,7 +103,7 @@ public class GradeBot
 				regexed = regexed.replaceAll("VAR" + i, "\\\\" + i);
 			}
 			regexed = regexed.replaceAll("VAR", "[a-zA-Z][a-zA-Z0-9]*");
-			realOnes.add(new searchString(regexed, orig, x));
+			realOnes.add(new SearchString(regexed, orig, x));
 		});
 
 		this.searchStrings = realOnes;
@@ -116,7 +114,7 @@ public class GradeBot
 	 */
 	public void addRawSearchString(String regex, int value)
 	{
-		this.searchStrings.add(new searchString(regex, regex, value));
+		this.searchStrings.add(new SearchString(regex, regex, value));
 	}
 
 

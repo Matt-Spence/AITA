@@ -20,10 +20,10 @@ class Grader
 	 * @param ignoreSymbolCharacters if true it will ignore all non-alphanumeric, if false it won't
 	 * @param searchStrings every regex string to compare against as a key, and it's score value
 	 */
-	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, List<searchString> searchStrings)
+	static Result grade(File currentFile, File inputFile, File correctOutputFile, boolean ignoreWhiteSpace, boolean ignoreSymbolCharacters, List<SearchString> searchStrings)
 	{
 		
-		List<searchString> missedRegex = new LinkedList<>();
+		List<SearchString> missedRegex = new LinkedList<>();
 		
 		StringBuilder sourceCodeBuild = new StringBuilder();
 		String sourceCode;
@@ -145,7 +145,7 @@ class Grader
 				expectedResult = expectedSymbolStripper.toString();
 			}
 
-			for (searchString x : searchStrings) {
+			for (SearchString x : searchStrings) {
 				String pattern = "^[\\W\\w]*" + x.getRegex() + "[\\W\\w]*$";
 				Integer value = x.getValue();
 				if (!sourceCode.matches(pattern)) {
